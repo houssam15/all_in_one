@@ -31,3 +31,6 @@ body {
     text-wrap: balance;
   }
 }
+* {
+  --tw-ring-color: rgb(0 0 0 / 0) !important;
+}
