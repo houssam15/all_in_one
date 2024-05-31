@@ -7,7 +7,7 @@ interface MainPropTypes{
 export default function Main({children}:MainPropTypes) {
     
     return (
-     <div>
+     <div  className="col-span-9 h-[95vh]">
         {children}
      </div>
     );

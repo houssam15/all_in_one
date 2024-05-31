@@ -15,6 +15,14 @@ class Route {
             active: false,
             childrens: [],
         },
+        {
+            route: "/website-scrapper",
+            name: "Web site scrapper",
+            icon: HiUserCircle,
+            active: false,
+            childrens: [],
+        },
+    
     ];
 
     getRoutes(){
