@@ -9,27 +9,11 @@ class Route {
 
     protected routes: Array<RouteType> = [
         {
-            route: "#",
+            route: "/social-media-scrapper/pages/general",
             name: "Social media scrapper",
             icon: HiUserCircle,
             active: false,
-            childrens: [
-                {
-                    route: "/social-media-scrapper/social-media",
-                    name: "Social media",
-                    icon: HiUserCircle,
-                    active: false,
-                    childrens: [
-                        {
-                            route: "/social-media-scrapper/social-media/facebook",
-                            name: "Facebook",
-                            icon: HiUserCircle,
-                            active: false,
-                            childrens: [],
-                        },
-                    ],
-                },
-            ],
+            childrens: [],
         },
 
     
