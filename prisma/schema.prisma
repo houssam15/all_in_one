@@ -1,20 +1,32 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-}
-
+    
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-
-model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String
+generator client {
+  provider = "prisma-client-js"
 }
+
+model competitorAnalysisScraperSite {
+  id        String                              @id @default(auto()) @map("_id") @db.ObjectId
+  site      String
+  version   Int
+  backlinks competitorAnalysisScraperBackLink[]
+}
+
+model competitorAnalysisScraperBackLink {
+  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
+  siteId           String                        @db.ObjectId
+  site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
+  url              String?
+  type             String?
+  anchorText       String?
+  sourceDomain     String?
+  sourcePage       String?
+  pageSpeed        Float?
+  pageAvailability String?
+}
+
+  

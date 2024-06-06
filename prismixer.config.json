@@ -1,0 +1,4 @@
+{
+    "input": ["base.prisma", "./app/**/**.prisma"],
+    "output": "prisma/schema.prisma"
+}
