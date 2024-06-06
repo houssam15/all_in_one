@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/social-media-scrapper/api/route.ts", "app/competitor_analysis_scraper/controller/getTotalPages.ts", "app/competitor_analysis_scraper/controller/index.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/social-media-scrapper/api/route.ts", "app/competitor_analysis_scraper/controller/getTotalPages.ts", "app/competitor_analysis_scraper/controller/index.ts", "app/website-scrapper/view/ping/page.jsx"],
   "exclude": ["node_modules"]
 }

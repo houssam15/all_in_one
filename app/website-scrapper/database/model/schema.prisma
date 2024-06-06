@@ -1,0 +1,8 @@
+model websiteScrapperSite {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  site           String
+  dateAt        DateTime   @db.Date
+ 
+}
+
+ 
