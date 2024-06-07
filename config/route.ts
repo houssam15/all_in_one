@@ -1,3 +1,4 @@
+
 import { RouteType } from "./type";
 import fs from "fs";
 import path from "path";
@@ -16,7 +17,6 @@ class Route {
     }
 
     getRoutes(){
-
         return this.routes;
     }
 }
