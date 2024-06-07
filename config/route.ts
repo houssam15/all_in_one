@@ -1,4 +1,4 @@
-import { HiUserCircle } from "react-icons/hi";
+import { HiUserCircle , HiGlobe } from "react-icons/hi";
 import { RouteType } from "./type";
 
 
@@ -12,6 +12,13 @@ class Route {
             route: "/social-media-scrapper/pages/general",
             name: "Social media scrapper",
             icon: HiUserCircle,
+            active: false,
+            childrens: [],
+        },
+        {
+            route: "/website-scrapper/view/ping",
+            name: "Website Scrapper",
+            icon: HiGlobe,
             active: false,
             childrens: [],
         },
