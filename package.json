@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "update": "npx prismixer && prisma db push"
+    "update": "npx prismixer && prisma db push",
+    "git":"git add . && git commit -m 'h' && git pull & git merge & git push"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
