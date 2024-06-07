@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import axios from "axios";
-import {createBackLink ,deleteBySite} from "@/app/competitor_analysis_scraper/database/data";
+//import {createBackLink ,deleteBySite} from "@/app/competitor_analysis_scraper/database/data";
 interface getTotalPagesParams {
     url : Required<string>;
 }
@@ -42,7 +42,7 @@ export default async function getWebsiteBacklinks({url} : getTotalPagesParams){
         await b.close();
         //save in db
         for(let elm in bl){
-            await createBackLink(url,elm);
+           // await createBackLink(url,elm);
         }
         return bl;
     }catch(err){

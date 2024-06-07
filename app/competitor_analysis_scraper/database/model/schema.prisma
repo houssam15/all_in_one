@@ -1,19 +1,18 @@
 model competitorAnalysisScraperSite {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  site           String
-  version        Int
-  backlinks      competitorAnalysisScraperBackLink[]
+  id                            String                          @id @default(auto()) @map("_id") @db.ObjectId
+  site                          String
+  version                       Int
+  competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
-model competitorAnalysisScraperBackLink {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  siteId         String     @db.ObjectId
-  site           competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
-  url            String?  
-  type           String?
-  anchorText     String?
-  sourceDomain   String?
-  sourcePage     String?
-  pageSpeed      Float?
+model competitorAnalysisScraperPage {
+  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
+  siteId           String                        @db.ObjectId
+  site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
+  url              String?
+  anchorText       String?
+  sourceDomain     String?
+  sourcePage       String?
+  pageSpeed        Float?
   pageAvailability String?
 }

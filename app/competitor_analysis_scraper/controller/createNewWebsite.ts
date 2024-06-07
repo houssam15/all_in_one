@@ -2,12 +2,10 @@ import {createNewWebsite , getWebsiteVersion , updateWebsite} from "@/app/compet
 
 export default async function NewWebsite(site:string){
     try{
-        //check if already exist
         const version = await getWebsiteVersion(site);
-        if(version<0) throw new Error("database error");
-        if(version==1) await createNewWebsite(site , version);
-        else await updateWebsite(site , version);
-        return 1;        
+        if(version<0 || typeof version !="number") throw new Error("database error");
+        if(version==0) await createNewWebsite(site , version);
+        return version;        
     }catch(err){
         return -1;
     }
