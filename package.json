@@ -8,15 +8,17 @@
     "start": "next start",
     "lint": "next lint",
     "update": "npx prismixer && prisma db push",
-    "git":"git add . && git commit -m 'h' && git pull & git merge & git push"
+    "git": "git add . && git commit -m 'h' && git pull & git merge & git push"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "flowbite-react": "^0.9.0",
+    "fs": "^0.0.1-security",
     "mongodb": "^6.7.0",
     "next": "14.2.3",
+    "path": "^0.12.7",
     "prismixer": "^1.0.4",
     "puppeteer": "^22.10.0",
     "react": "^18",

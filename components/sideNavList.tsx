@@ -5,7 +5,7 @@ import { HiChevronDown, HiChevronUp, HiUserCircle } from "react-icons/hi";
 import Link from "next/link";
 import Route from "../config/route";
 import { RouteType } from "../config/type";
-
+//dépanage
 export default function SideNavList() {
     const [openRoutes, setOpenRoutes] = useState<{ [key: string]: boolean }>({});
     const routes = new Route();
