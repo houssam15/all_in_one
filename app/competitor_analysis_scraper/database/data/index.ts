@@ -43,7 +43,7 @@ export async function createNewWebsite(site: string , version : number){
         version : version,
       }
     });
-    console.log(data)
+    return data;
   }catch(err){
     console.error(err);
     return -2;
