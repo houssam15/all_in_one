@@ -1,5 +1,4 @@
-import {createNewWebsite , getWebsiteVersion , updateWebsite} from "@/app/competitor_analysis_scraper/database/data";
-
+import {createNewWebsite , getWebsiteVersion , updateWebsite} from "@/app/competitor-analysis-scraper/database/data";
 export default async function NewWebsite(site:string){
     try{
         const version = await getWebsiteVersion(site);
