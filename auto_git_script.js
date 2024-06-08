@@ -1,19 +1,16 @@
 const { exec } = require("child_process");
 
-const commitMessage = process.argv[2];
-
-if (!commitMessage) {
-  console.error("Please provide a commit message");
-  process.exit(1);
-}
+// Parse command line arguments
+var message = process.argv.slice(2).length>0?process.argv.slice(2)[0]:"new update"
 
 const commands = [
   "git add .",
-  `git commit -m "${commitMessage}"`,
+  `git commit -m "${message}"`,
   "git pull",
   "git merge",
   "git push"
 ].join(" && ");
+
 
 exec(commands, (err, stdout, stderr) => {
   if (err) {
@@ -26,3 +23,7 @@ exec(commands, (err, stdout, stderr) => {
   }
   console.log(`Stdout: ${stdout}`);
 });
+
+
+
+
