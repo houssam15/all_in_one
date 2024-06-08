@@ -5,7 +5,7 @@ import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { MenuType } from "../config/type";
 
-// Dépannage
+//   Dépannage
 export default function SideNavList() {
   const [menu, setMenu] = useState<MenuType[]>([]);
   const [isError, setIsError] = useState(false);
