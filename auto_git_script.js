@@ -3,7 +3,7 @@ const { exec } = require("child_process");
 // Parse command line arguments
 const args = process.argv.slice(2);
 const message = args.length > 0 ? args[0] : "new update";
-
+console.log(message)
 const executeCommands = async () => {
   const commands = [
     { command: "git add .", label: "add", color: "blue" },
