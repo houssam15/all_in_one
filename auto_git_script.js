@@ -14,7 +14,6 @@ const executeCommands = async () => {
   ];
 
   for (let { command, label, color } of commands) {
-    console.log(`=====================${label}=========================`);
     const chalk = await import("chalk");
     const colorFunction = chalk.default[color];
     console.log(colorFunction(`=====================${label}=========================`));
