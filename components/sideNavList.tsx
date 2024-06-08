@@ -21,7 +21,7 @@ export default function SideNavList() {
         setIsError(true);
       } finally {
         setIsLoading(false);
-      }
+      }//x
     };
     fetchMenu();
   }, []);
