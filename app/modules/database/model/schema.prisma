@@ -1,0 +1,11 @@
+model moduleMenu {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  route          String
+  name           String
+  icon           String
+  active         Boolean
+}
+
+
+
+ 

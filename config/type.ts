@@ -1,8 +1,7 @@
-import { IconType } from 'react-icons';
-export interface RouteType {
+export interface MenuType {
     route : string,
     name : string,
-    icon : IconType,
+    icon : string,
     active : boolean,
-    childrens : Array<RouteType>
 }
+

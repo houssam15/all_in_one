@@ -11,6 +11,7 @@
     "git": "git add . && git commit -m 'h' && git pull & git merge & git push"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
     "@prisma/client": "^5.15.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",

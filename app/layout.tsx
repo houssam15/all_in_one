@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+
+import type {Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SideBar from "../components/sideNar";
 import Main from "../components/main";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,3 +27,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+
