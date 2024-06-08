@@ -31,7 +31,7 @@ const executeCommands = async () => {
         if (stdout) {
           console.log(colorFunction(`Stdout: ${stdout}`));
         } else {
-          console.log(colorFunction(`${label} command executed successfully.`));
+          console.log(`${label} command executed successfully.`);
         }
         resolve();
       });
