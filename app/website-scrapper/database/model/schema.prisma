@@ -1,6 +1,9 @@
 model websiteScrapperSite {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
   site           String
+  description String
+  status   String
+  seoPercentage  Float
   dateAt        DateTime   @db.Date
  
 }
