@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import controller from "@/app/competitor_analysis_scraper/controller";
-//http://localhost:3000/competitor_analysis_scraper/api/site/create
+import controller from "@/app/competitor-analysis-scraper/controller";
+//http://localhost:3000/competitor-analysis-scraper/api/site/create
 export async function POST (req:NextRequest){
-    const response = {module : "competitor_analysis_scraper" , api:"/site/create" , description:"add new website"}
+    const response = {module : "competitor-analysis-scraper" , api:"/site/create" , description:"add new website"}
     const data = await req.json();
     if(typeof data?.url !="string")
     return NextResponse.json({...response , data:{message:"url not found !"} },{status: 400});
