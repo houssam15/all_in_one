@@ -7,7 +7,7 @@ interface MainPropTypes{
 export default function Main({children}:MainPropTypes) {
     
     return (
-      <div style={{ width: "calc(100% - 150px)" }}>
+      <div className="bg-gray-900 " style={{ width: "calc(100% - 150px)" }}>
         {children}
      </div>
     );
