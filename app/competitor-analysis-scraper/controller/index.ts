@@ -1,9 +1,4 @@
-import getTotalPages from "./methods/getTotalPages";
-import createNewWebsite from "./methods/createNewWebsite";
-import getWebsitePages from "./methods/getWebSitePages";
 
-export default {
-    getTotalPages,
-    createNewWebsite,
-    getWebsitePages
-};
+export {getTotalPages} from "./methods/getTotalPages";
+export {createNewWebsite} from "./methods/createNewWebsite";
+export {getWebsitePages } from "./methods/getWebSitePages";

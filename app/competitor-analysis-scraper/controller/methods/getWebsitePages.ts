@@ -1,15 +1,14 @@
+"use server"
 import Browser from "../utils/browser.class";
 
-export default async function getWebsitePages(url:string|null):Promise<Browser>{
-    const browser = new Browser();
-    try{
+export async function getWebsitePages (url:string|null , max:string|null):Promise<Browser>{
+
+    var browser = new Browser(max);
         if(!(await browser.isParamsValid(url))){
-            console.log("PASS")
-           // throw new Error("Invalid params");
+            throw new Error("Invalid params");
         } 
-        const pages = await browser.getPages(url as string);
-    }catch(err:any){
-        console.error(err);
-    }   
-    return browser; 
+        const pages = await browser.getPages(url as string , );
+    return browser;
 }
+
+
