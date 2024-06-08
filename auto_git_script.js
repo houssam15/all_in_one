@@ -1,7 +1,8 @@
 const { exec } = require("child_process");
 
 // Parse command line arguments
-var message = process.argv.slice(2).length>0?process.argv.slice(2)[0]:"new update"
+const args = process.argv.slice(2);
+const message = args.length > 0 ? args[0] : "new update";
 
 const commands = [
   { command: "git add .", label: "add" },
@@ -26,6 +27,8 @@ const executeCommands = async (commands) => {
         }
         if (stdout) {
           console.log(`Stdout: ${stdout}`);
+        } else {
+          console.log(`${label} command executed successfully.`);
         }
         resolve();
       });
@@ -40,7 +43,3 @@ executeCommands(commands)
   .catch((err) => {
     console.error("An error occurred while executing commands.");
   });
-
-
-
-
