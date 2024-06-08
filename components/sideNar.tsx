@@ -22,7 +22,7 @@ export default function SideNar(/*{setMainContent}:SideNavPropsType*/) {
         <nav>
     
           <SideNavList />
-          <a
+          {/* <a
             className="flex items-center px-4 py-2 mt-5 text-gray-200 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
             href="#"
           >
@@ -58,7 +58,7 @@ export default function SideNar(/*{setMainContent}:SideNavPropsType*/) {
           >
             <CiCircleQuestion size={25} />
             <span className="mx-4 font-medium">Settings</span>
-          </a>
+          </a> */}
         </nav>
         <a href="#" className="flex items-center px-4 -mx-2">
           <img
