@@ -22,7 +22,6 @@ const executeCommands = async () => {
         if (err) {
           console.error(colorFunction(`Error: ${err.message}`));
           reject(err);
-          return;
         }
         if (stderr) {
           console.error(colorFunction(`Stderr: ${stderr}`));
