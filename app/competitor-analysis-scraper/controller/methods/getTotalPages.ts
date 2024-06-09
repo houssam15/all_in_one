@@ -1,10 +1,8 @@
+"use server"
 import puppeteer from "puppeteer";
 
-interface getTotalPagesParams {
-    url : Required<string>;
-}
 
-export default async function getTotalPages({url} : getTotalPagesParams){
+export  async function getTotalPages({url} : getTotalPagesParams) : Promise<any>{
     try{
         const b = await puppeteer.launch();
         const p = await b.newPage();
@@ -18,4 +16,9 @@ export default async function getTotalPages({url} : getTotalPagesParams){
         console.error(err);
         return -1;
     }
+}
+
+
+interface getTotalPagesParams {
+    url : Required<string>;
 }

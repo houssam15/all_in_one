@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import controller from "@/app/competitor-analysis-scraper/controller";
 //http://localhost:3000/competitor-analysis-scraper/api/site/delete
 export async function DELETE (req:NextRequest){
     const response = {module : "competitor-analysis-scraper" , api:"/site/delete" , description:"delete a website"}
