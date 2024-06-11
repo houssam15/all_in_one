@@ -1,7 +1,8 @@
 model competitorAnalysisScraperSite {
-  id                            String             @id @default(auto()) @map("_id") @db.ObjectId
+  id                            String           @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
   version                       Int
+  proccessed                    Boolean @default(false)
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
@@ -9,10 +10,6 @@ model competitorAnalysisScraperPage {
   id               String                        @id @default(auto()) @map("_id") @db.ObjectId
   siteId           String                        @db.ObjectId
   site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
-  url              String?
-  anchorText       String?
-  sourceDomain     String?
-  sourcePage       String?
-  pageSpeed        Float?
-  pageAvailability String?
+  url              String
+  
 }

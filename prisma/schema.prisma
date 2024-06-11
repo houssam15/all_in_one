@@ -13,19 +13,15 @@ model competitorAnalysisScraperSite {
   id                            String                          @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
   version                       Int
+  proccessed                    Boolean                         @default(false)
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
 model competitorAnalysisScraperPage {
-  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
-  siteId           String                        @db.ObjectId
-  site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
-  url              String?
-  anchorText       String?
-  sourceDomain     String?
-  sourcePage       String?
-  pageSpeed        Float?
-  pageAvailability String?
+  id     String                        @id @default(auto()) @map("_id") @db.ObjectId
+  siteId String                        @db.ObjectId
+  site   competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
+  url    String
 }
 
 model moduleMenu {
@@ -37,9 +33,12 @@ model moduleMenu {
 }
 
 model websiteScrapperSite {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  site   String
-  dateAt DateTime @db.Date
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  site          String
+  description   String
+  status        String
+  seoPercentage Float
+  dateAt        DateTime @db.Date
 }
 
   

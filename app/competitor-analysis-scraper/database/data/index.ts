@@ -35,18 +35,11 @@ const prisma = new PrismaClient()
 // }
 
 
-export async function createNewWebsite(site: string , version : number){
+export async function createNewSite(site: string , version : number){
   try{
-    const data = await prisma.competitorAnalysisScraperSite.create({
-      data:{
-        site:site,
-        version : version,
-      }
-    });
-    return data;
+    return await prisma.competitorAnalysisScraperSite.create({ data : { site : site , version : version}});
   }catch(err){
-    console.error(err);
-    return -2;
+    return null;
   }
 }
 
@@ -74,9 +67,55 @@ export async function updateWebsite(site :string , version:number){
   }catch(err){
     console.error(err);
     return -2;
+  } 
+}
+
+export async function getSiteByUrl(url:string):Promise<any>{
+  try{
+    return await prisma.competitorAnalysisScraperSite.findFirstOrThrow({ where : { site : url}});
+  }catch(err){ 
+    return null 
   }
 }
 
+
+export async function saveSitePages(site:any , pages : string[]):Promise<string[]|null>{
+  try{
+    var new_urls:string[] = [];
+    for(var page of pages){
+   
+        const pg = await prisma.competitorAnalysisScraperPage.findFirst({where:{url : page}});
+        if(pg!=null) continue;
+        await prisma.competitorAnalysisScraperPage.create({data:{
+          siteId : site.id,
+          url : page,
+        }});
+        new_urls.push(page); 
+    }
+    return new_urls;
+  }catch(err){
+    return null;
+  }
+}
+
+export async function getSitePages(url:string):Promise<any>{
+  try{
+    const site = await getSiteByUrl(url);
+    if(site==null) throw new Error("Site not exist");
+    const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id}});
+    return pages;
+  }catch(err){
+    return null;
+  }
+}
+
+export async function createPageAnalytic(page : any) : Promise<any>{
+  try{
+      
+  }catch(err){
+    return null;
+  }
+}
 
 
 
