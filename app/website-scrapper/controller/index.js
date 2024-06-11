@@ -1,6 +1,2 @@
- 
-import CreateWebsite from "./CreateSite";
-export default {
- 
-    CreateWebsite
-};
+
+export {createNewWebsite} from "./CreateSite";

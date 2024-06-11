@@ -1,35 +1,15 @@
- 
-
 import { NextRequest, NextResponse } from 'next/server';
-
+ import {createNewWebsite} from "./../../controller";
+//http://localhost:3000/competitor-analysis-scraper/api/site/create
 export async function POST (req){
-  
-
-        console.log(data);
-        try {   
-            const data = await req.json();
-            const {site,status,description,seoPercentage,dateAt} = data;
-               if(!site || !status || !description || !seoPercentage || !dateAt){
-     return new NextResponse(JSON.stringify({ error: 'site, status, and description and seoPercentage  and dateAt  are required in the request body.' }),{status:400});
-   }
-
-            } catch (error) {
-  console.error('Error connecting to the database:', error);
-  return new NextResponse(JSON.stringify({error: 'Internal Server Error'}), {status: 500});
-}
-     //   try {   
-//   const userdata = await req.json();
-
-//   const {name,email,phone,password} = userdata;
-//   if(!name || !email || !phone || !password){
-//     return new NextResponse(JSON.stringify({ error: 'name, email, and password are required in the request body.' }),{status:400});
-//   }
-
-//   const newUser = await UserService.create_user({username:name , email:email , password:password , phone:phone});
-
-//   return new NextResponse(JSON.stringify({/* id:  newUser.dataValues.id ,*/ message: 'User created successfully' }), {status: 200});
-// } catch (error) {
-//   console.error('Error connecting to the database:', error);
-//   return new NextResponse(JSON.stringify({error: 'Internal Server Error'}), {status: 500});
-// }
-}
+    const response = {module : "website-scrapper" , api:"/create_site" , description:"add new website"}
+    const data = await req.json();
+    // if(typeof data?.url !="string")
+    // return NextResponse.json({...response , data:{message:"url not found !"} },{status: 400});
+    const res = await createNewWebsite("test","test");
+    console.log(res);
+    if(!res) 
+      return NextResponse.json({...response , data :{ message : "failed !"}},{status: 400});
+    return NextResponse.json({...response , data:{message : "created succesfully !" }},{status: 200});
+ 
+  } 
