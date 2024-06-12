@@ -1,14 +1,18 @@
 "use server"
 import {createSiteBase} from "./../database/data";
-export  async function createNewWebsite(site){
+export  async function createNewWebsite(site,description){
     try{
-     
-       const res = await createSiteBase("test","descriptions","dd",10,"27-25-20")
-       
-       console.log(res);
-       return true;
+ 
+        const status = "empty"
+        const seoPercentage = 0
+        const dateAt = new Date().toISOString()
+
+
+       const res = await createSiteBase(site,description,status,seoPercentage,dateAt)
+ 
+      return res;
        
     }catch(err){
-        return -1;
+        return false;
     }
 }

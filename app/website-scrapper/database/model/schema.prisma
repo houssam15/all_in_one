@@ -1,5 +1,5 @@
 model websiteScrapperSite {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  id    String  @id @default(cuid()) @map("_id")
   site           String
   description    String
   status   String

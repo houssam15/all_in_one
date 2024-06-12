@@ -16,9 +16,35 @@ export async function createSiteBase(site,description,status,seoPercentage,dateA
             dateAt: dateAt
           }
         });
-        console.log(data)
+        return true
       }catch(err){
         console.error(err);
-        return -2;
+        return false;
+      }
+}
+export async function GetAllBase( ){
+ 
+    try{
+      
+        const data = await prisma.websiteScrapperSite.findMany();
+        return data
+      }catch(err){
+        console.error(err);
+        return false;
+      }
+}
+export async function GetSiteBase(site){
+   
+    try{
+      
+      const data = await prisma.websiteScrapperSite.findUnique({
+        where: {
+          id: site.toString(),
+        },
+      });
+        return data
+      }catch(err){
+        console.error(err);
+        return false;
       }
 }
