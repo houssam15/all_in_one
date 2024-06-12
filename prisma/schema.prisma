@@ -12,20 +12,27 @@ generator client {
 model competitorAnalysisScraperSite {
   id                            String                          @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
-  version                       Int
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
 model competitorAnalysisScraperPage {
-  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
-  siteId           String                        @db.ObjectId
-  site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
-  url              String?
-  anchorText       String?
-  sourceDomain     String?
-  sourcePage       String?
-  pageSpeed        Float?
-  pageAvailability String?
+  id                                    String                                  @id @default(auto()) @map("_id") @db.ObjectId
+  siteId                                String                                  @db.ObjectId
+  site                                  competitorAnalysisScraperSite           @relation(fields: [siteId], references: [id])
+  url                                   String
+  competitorAnalysisScraperPageAnalytic competitorAnalysisScraperPageAnalytic[]
+  is_proccessed                         Boolean                                 @default(false)
+}
+
+model competitorAnalysisScraperPageAnalytic {
+  id            String                        @id @default(auto()) @map("_id") @db.ObjectId
+  pageId        String                        @db.ObjectId
+  page          competitorAnalysisScraperPage @relation(fields: [pageId], references: [id])
+  is_accessible Boolean                       @default(false)
+  speed         Float                         @default(0)
+  availability  String
+  createdAt     DateTime                      @default(now())
+  updatedAt     DateTime                      @updatedAt
 }
 
 model moduleMenu {
@@ -37,7 +44,11 @@ model moduleMenu {
 }
 
 model websiteScrapperSite {
+<<<<<<< HEAD
   id             String       @unique
+=======
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+>>>>>>> 58b48fe1735efa88818e88e93643ed597cf5e1e6
   site          String
   description   String
   status        String

@@ -5,10 +5,11 @@ export default class Browser {
     private page : any =null;
     private errors :string[] = [];
     private results:any[]= [];
+    private pages:string[] = [];
     private max:number = 5;
 
-    constructor(max:string|null){
-      this.max = isNaN(Number(max))? Number(max):this.max;
+    constructor(max:string|null=null){
+      this.max = !isNaN(Number(max)) && Number(max)>0? Number(max):this.max;
     }
 
     public getErrors(){
@@ -19,6 +20,15 @@ export default class Browser {
       return this.results;
     }
     
+    public getPages(){
+      return this.pages;
+    }
+
+    public setPages(pages:string[]){
+       this.pages = pages;
+       return this;
+    }
+
     public getMax(){
       return this.max;
     }
@@ -28,9 +38,9 @@ export default class Browser {
       return this;
     }
 
-    protected addError(error:Required<string>){
+    public addError(error:Required<string>){
       this.errors.push(error);
-      return this.errors;
+      return this;
     }
 
     protected async getBrowser(){
@@ -49,7 +59,7 @@ export default class Browser {
       return this.getErrors().length > 0;
     }   
   
-    protected isUrlValid(url:any,push:boolean=true):boolean{
+    public isUrlValid(url:any,push:boolean=true):boolean{
       try{
         var regex = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi);
         const isValid :boolean = regex.test(url);
@@ -71,7 +81,7 @@ export default class Browser {
       }
     }
 
-    public async isParamsValid(url:Required<string|null> , push:boolean = true):Promise<boolean>{
+    public async ifValidVisitUrl(url:Required<string|null> , push:boolean = true):Promise<boolean>{
 
          if(this.isUrlValid(url , push) && (await this.isUrlReachable(url , push))) return true;
          else return false;
@@ -103,27 +113,42 @@ export default class Browser {
     }
     
 
-    public async getPages(url:Required<string>) : Promise<void>{
-        //get all links
-        var all_links : string[] = await Promise.all(
-          Array.from(await (await this.getPage()).$$eval('a', (links: any) => links.map((link:any) => (link.href))))
-        ); 
-        //remove duplicate links
-        all_links = this.removeDuplicates(all_links);
-        //visit every link 
-        for(var link of all_links){
-          var result : any ={};
-          const data = await this.getGoogleAnalytics(link);
-          result.is_accessible = await this.isParamsValid(link , false);
-          result.speed=data.speed;
-          result.availability=data.availability;
-          result.hostname=this.getHostName(link);
-          result.link = link;
-          console.log(result)
-          this.addResult(result);
-          if(all_links.indexOf(link)+1==this.getMax())
+
+    public async analyzeSitePages(pages:string[]) : Promise<void>{
+        for(var link of pages){
+          await this.getPageAnalytic(link);
+          if(pages.indexOf(link)+1==this.getMax())
             break;
         }
         await this.closeBrowser();
     }
+
+    public async getSitePages():Promise<any>{
+      try{
+        var pages : string[] = await Promise.all(
+          Array.from(await (await this.getPage()).$$eval('a', (links: any) => links.map((link:any) => (link.href))))
+        ); 
+        this.setPages(this.removeDuplicates(pages).filter(elm => elm.startsWith('https') || elm.startsWith('http')));
+        return this;
+      }catch(err){
+        return null;
+      }
+    }
+    
+    public async getPageAnalytic(url:string) : Promise<any>{
+      try{
+        var result : any ={};
+          const data = await this.getGoogleAnalytics(url);
+          result.is_accessible = await this.ifValidVisitUrl(url , false);
+          result.speed=data.speed;
+          result.availability=data.availability;
+          result.hostname=this.getHostName(url);
+          result.link = url;
+          return result;
+      }catch(err:any){
+        return null;
+      }
+    }
+
+ 
   }
