@@ -44,11 +44,7 @@ model moduleMenu {
 }
 
 model websiteScrapperSite {
-<<<<<<< HEAD
-  id             String       @unique
-=======
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
->>>>>>> 58b48fe1735efa88818e88e93643ed597cf5e1e6
+  id    String  @id @default(cuid()) @map("_id")
   site          String
   description   String
   status        String
