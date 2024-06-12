@@ -3,72 +3,14 @@ import { Prisma, PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 
-// export async function createBackLink(site:string,data:any ){
-//   try{
-
-  
-//     const link = await prisma.competitorAnalysisScraper.create({
-//         data: {
-//           site : site,
-//           url: data['url'],
-//           type: data["type"],
-//           anchorText: data["anchorText"],
-//           sourceDomain: data['sourceDomain'],
-//           sourcePage: data['sourcePage'],
-//           pageSpeed: data['pageSpeed'],
-//           pageAvailability: data['pageAvailability'],
-//         },
-//       });
-//    return link;
-//     }catch(err){
-//       console.error(err);
-//       return -1;
-//     }
-// }
-
-
-// export async function deleteBySite(site: string){
-//     const cnt = await prisma.competitorAnalysisScraper.deleteMany({
-//       where : { site : { equals : site } },
-//     });
-//     return cnt;
-// }
-
-
-export async function createNewSite(site: string , version : number){
+export async function createNewSite(site: string ){
   try{
-    return await prisma.competitorAnalysisScraperSite.create({ data : { site : site , version : version}});
+    return await prisma.competitorAnalysisScraperSite.create({ data : { site : site }});
   }catch(err){
     return null;
   }
 }
 
-
-export async function getWebsiteVersion(site :string){
-  try{
-    const website = await prisma.competitorAnalysisScraperSite.findFirst({
-      where : { site : site },
-    });
-    if(website==null) return 0;
-    return website.version;
-  }catch(err){
-    console.error(err);
-    return -2;
-  }
-}
-
-export async function updateWebsite(site :string , version:number){
-  try{
-    const updatedWebsite = await prisma.competitorAnalysisScraperSite.updateMany({
-      where: { site: site },
-      data: { version: version },
-    });
-    return updatedWebsite;
-  }catch(err){
-    console.error(err);
-    return -2;
-  } 
-}
 
 export async function getSiteByUrl(url:string):Promise<any>{
   try{
@@ -98,24 +40,36 @@ export async function saveSitePages(site:any , pages : string[]):Promise<string[
   }
 }
 
-export async function getSitePages(url:string):Promise<any>{
+export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
   try{
     const site = await getSiteByUrl(url);
     if(site==null) throw new Error("Site not exist");
-    const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id}});
+    const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id , is_proccessed:false}});
     return pages;
   }catch(err){
     return null;
   }
 }
 
-export async function createPageAnalytic(page : any) : Promise<any>{
-  try{
-      
+export async function createPageAnalytic(page:any,analytic : any) : Promise<any>{
+  try{ 
+    return await prisma.competitorAnalysisScraperPageAnalytic.create({data : {
+        pageId:page.id,
+        is_accessible : analytic.is_accessible,
+        speed : analytic.speed,
+        availability : analytic.availability,
+      }});
   }catch(err){
     return null;
   }
 }
 
 
-
+export async function setSitePageasProccessed(page:any) : Promise<any>{
+  try{ 
+    return await prisma.competitorAnalysisScraperPage.update({
+      where:{ id:page.id } , data : { is_proccessed : true } });
+  }catch(err){
+    return null;
+  }
+}

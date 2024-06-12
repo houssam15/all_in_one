@@ -1,8 +1,6 @@
 model competitorAnalysisScraperSite {
   id                            String           @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
-  version                       Int
-  proccessed                    Boolean @default(false)
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
@@ -11,5 +9,17 @@ model competitorAnalysisScraperPage {
   siteId           String                        @db.ObjectId
   site             competitorAnalysisScraperSite @relation(fields: [siteId], references: [id])
   url              String
-  
+  competitorAnalysisScraperPageAnalytic competitorAnalysisScraperPageAnalytic[]
+  is_proccessed    Boolean                       @default(false)
+}
+
+model competitorAnalysisScraperPageAnalytic {
+  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
+  pageId           String                        @db.ObjectId
+  page             competitorAnalysisScraperPage @relation(fields: [pageId], references: [id])
+  is_accessible    Boolean                       @default(false)
+  speed            Float                         @default(0)
+  availability     String
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
 }
