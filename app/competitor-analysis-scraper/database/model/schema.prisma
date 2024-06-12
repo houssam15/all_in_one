@@ -19,7 +19,7 @@ model competitorAnalysisScraperPageAnalytic {
   page             competitorAnalysisScraperPage @relation(fields: [pageId], references: [id])
   is_accessible    Boolean                       @default(false)
   speed            Float                         @default(0)
-  availability     String
+  availability     String?
   createdAt        DateTime                      @default(now())
   updatedAt        DateTime                      @updatedAt
 }

@@ -53,6 +53,7 @@ export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
 
 export async function createPageAnalytic(page:any,analytic : any) : Promise<any>{
   try{ 
+    console.log(analytic)
     return await prisma.competitorAnalysisScraperPageAnalytic.create({data : {
         pageId:page.id,
         is_accessible : analytic.is_accessible,
@@ -60,6 +61,7 @@ export async function createPageAnalytic(page:any,analytic : any) : Promise<any>
         availability : analytic.availability,
       }});
   }catch(err){
+    console.log(err);
     return null;
   }
 }
