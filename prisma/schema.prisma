@@ -9,9 +9,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Status {
+  COMPLETED
+  WORKING
+  NEW
+}
+
 model competitorAnalysisScraperSite {
   id                            String                          @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
+  state                         Status                          @default(NEW)
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 
@@ -30,7 +37,7 @@ model competitorAnalysisScraperPageAnalytic {
   page          competitorAnalysisScraperPage @relation(fields: [pageId], references: [id])
   is_accessible Boolean                       @default(false)
   speed         Float                         @default(0)
-  availability  String
+  availability  String?
   createdAt     DateTime                      @default(now())
   updatedAt     DateTime                      @updatedAt
 }
@@ -44,7 +51,7 @@ model moduleMenu {
 }
 
 model websiteScrapperSite {
-  id    String  @id @default(cuid()) @map("_id")
+  id            String   @id @default(cuid()) @map("_id")
   site          String
   description   String
   status        String

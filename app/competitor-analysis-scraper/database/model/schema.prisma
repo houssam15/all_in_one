@@ -1,6 +1,13 @@
+enum Status {
+  COMPLETED
+  WORKING
+  NEW
+}
+
 model competitorAnalysisScraperSite {
   id                            String           @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
+  state                         Status @default(NEW) 
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
 }
 

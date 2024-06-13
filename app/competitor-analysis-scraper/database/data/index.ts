@@ -44,7 +44,9 @@ export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
   try{
     const site = await getSiteByUrl(url);
     if(site==null) throw new Error("Site not exist");
+    if(site.state=="NEW") await updateSiteState(site.id,"WORKING");
     const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id , is_proccessed:false}});
+    if(pages.length==0) await updateSiteState(site.id,"COMPLETED");
     return pages;
   }catch(err){
     return null;
@@ -53,7 +55,6 @@ export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
 
 export async function createPageAnalytic(page:any,analytic : any) : Promise<any>{
   try{ 
-    console.log(analytic)
     return await prisma.competitorAnalysisScraperPageAnalytic.create({data : {
         pageId:page.id,
         is_accessible : analytic.is_accessible,
@@ -61,7 +62,6 @@ export async function createPageAnalytic(page:any,analytic : any) : Promise<any>
         availability : analytic.availability,
       }});
   }catch(err){
-    console.log(err);
     return null;
   }
 }
@@ -75,3 +75,33 @@ export async function setSitePageasProccessed(page:any) : Promise<any>{
     return null;
   }
 }
+
+export async function updateSiteState(siteId : any,state:any): Promise<any>{
+  try{ 
+    return await prisma.competitorAnalysisScraperSite.update({
+      where:{ id:siteId } , data : { state : state } });
+  }catch(err){
+    return null;
+  }
+}
+
+export async function getWorkingSite(): Promise<any>{
+  try{ 
+    return await prisma.competitorAnalysisScraperSite.findFirst({
+      where:{ state:"WORKING" }});
+  }catch(err){
+    return null;
+  }
+}
+
+
+export async function updateSiteStateAndHisPages(siteId:string): Promise<any>{
+  try{
+    const site = await prisma.competitorAnalysisScraperSite.findFirstOrThrow({where:{id:siteId}});
+    await prisma.competitorAnalysisScraperPage.updateMany({where:{siteId:site.id} , data:{is_proccessed:false}});
+    return await prisma.competitorAnalysisScraperSite.update({where:{id:site.id} , data:{state:'NEW'}});
+  }catch(err){
+    return null;
+  }
+}
+
