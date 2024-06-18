@@ -3,19 +3,35 @@
 const express = require('express');
 const cron = require('node-cron');
 const axios = require('axios');
+const cors = require('cors'); 
 const app = express();
+
+const socketIo = require('socket.io');
+const server = require("http").createServer(app);
+const io = socketIo(server , {
+  cors:{
+    origin:process.env.HOST,
+    methods:["GET" , "POST"]
+  }
+});
+
 const host = process.env.HOST;
 
 let job = null;
+const sockets = new Map(); // Store connected sockets
+
 // Cron job logic
 const runCronJob = async () => {
   try {
+    //console.log("cron executed");
     const site = await axios.get(host+'/competitor-analysis-scraper/api/site/get-working-site');
     const response = await axios.get(host+'/competitor-analysis-scraper/api/pages/get-analytics?url='+site.data.site);
-    //console.log('API triggered successfully:', response.data);
+     // Notify all connected clients
+    sockets.forEach((socket) => {
+      socket.emit('analytics-updated', response.data);
+    });
   } catch (error) {
-   // console.error('Error triggering API:', error.response.data);
-    if (error.response.data?.stopcron == true) {
+    if (error.response?.data?.stopcron == true) {
       stopCron();
     }
   }
@@ -25,14 +41,11 @@ const stopCron = () => {
     if (job) {
       job.stop();
       job = null;
-      //console.log('Cron job stopped.');
     }
 };
 
-// Start the cron job immediately when the server starts
 runCronJob();
 
-// Define API routes for starting and stopping the cron job
 app.get('/api/competitor-analysis-scraper/start-cron', (req, res) => {
   if (!job) {
     job = cron.schedule('*/1 * * * *', runCronJob);
@@ -54,13 +67,21 @@ app.get('/api/competitor-analysis-scraper/stop-cron', (req, res) => {
 
 
 
+io.on('connection', (socket) => {
+  //console.log('user connected ',socket.id);
+    // Add socket to the map
+    sockets.set(socket.id, socket);
 
+    socket.on('disconnect', () => {
+     // console.log('user disconnected', socket.id);
+      
+      // Remove socket from the map
+      sockets.delete(socket.id);
+    });
+});
 
-
-// Start the Express server
-const PORT = 3001; // or any other port you prefer
-app.listen(PORT, () => {
-  console.log(`competitor-analysis-scraper cron running on port ${PORT}`);
+server.listen(process.env.COMPETITOR_ANALYSIS_SCRAPPER_CRON_PORT||3001, () => {
+ // console.log(`competitor-analysis-scraper cron running on port ${PORT}`);
 });
 
 

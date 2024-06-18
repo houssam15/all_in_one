@@ -6,7 +6,7 @@ export default class Browser {
     private errors :string[] = [];
     private results:any[]= [];
     private pages:string[] = [];
-    private max:number = 5;
+    private max:number = 1;
 
     constructor(max:string|null=null){
       this.max = !isNaN(Number(max)) && Number(max)>0? Number(max):this.max;

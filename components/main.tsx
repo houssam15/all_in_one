@@ -7,7 +7,7 @@ interface MainPropTypes{
 export default function Main({children}:MainPropTypes) {
     
     return (
-      <div className="bg-gray-900 " style={{ width: "calc(100% - 150px)" }}>
+      <div className="h-screen overflow-auto" style={{ width: "calc(100% - 150px)" }}>
         {children}
      </div>
     );

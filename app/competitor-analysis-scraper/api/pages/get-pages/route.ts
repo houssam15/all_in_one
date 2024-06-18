@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {getWebsitePages } from "../../../controller";
 
-//http://localhost:3000/competitor-analysis-scraper/api/analytics/pages?url=xxxx.com&max=2
+//http://localhost:3000/competitor-analysis-scraper/api/pages/get-pages?url=xxxx.com
 
 export async function GET (req:NextRequest){
     const result = await getWebsitePages(req.nextUrl.searchParams.get('url'),req.nextUrl.searchParams.get('max'));

@@ -5,6 +5,7 @@ import "./globals.css";
 import SideBar from "../components/sideNar";
 import Main from "../components/main";
 import { Suspense } from "react";
+import React from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,11 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <div className=" flex ">
-
+      <div className=" flex">
           <SideBar/>
-     
-          <Main children={children}  />
+          <Main children={children}   />
       </div>
   </body>
     </html>

@@ -5,3 +5,11 @@ npx prisma init
 npm install mongodb
 npm install @prisma/client
 prisma db push//to update schema 
+
+
+
+
+
+
+
+

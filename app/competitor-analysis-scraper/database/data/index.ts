@@ -105,3 +105,17 @@ export async function updateSiteStateAndHisPages(siteId:string): Promise<any>{
   }
 }
 
+
+export async function getSiteAnalyticsProgress(url:string): Promise<number|null>{
+  try{
+    const site = await getSiteByUrl(url);
+    if(site==null) throw new Error("Site not found !");
+      const total_pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId:site.id}});
+      const proccessed_pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId:site.id , is_proccessed:true}});
+      return (proccessed_pages.length/total_pages.length)*100;
+  }catch(err){
+    return null;
+  }
+}
+
+
