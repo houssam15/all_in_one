@@ -1,156 +1,52 @@
 "use client"
-import React,{ useState, useMemo }  from "react";
+import React,{ useState, useMemo, useEffect }  from "react";
 const products = [
     {
       id: 1,
-      Category: "Electronics",
-      Company: "Apple",
-      Product: "iPhone 13",
-      Description: "The latest iPhone with advanced features",
-      Price: 999,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "John Doe",
-          Quantity: 2,
-          TotalAmount: 1998,
-        },
-        {
-          Date: "2023-09-04",
-          Customer: "Jane Smith",
-          Quantity: 1,
-          TotalAmount: 999,
-        },
-      ],
-    },
-    {
-      id: 2,
-      Category: "Clothing",
-      Company: "Nike",
-      Product: "Running Shoes",
-      Description: "High-quality running shoes for athletes",
-      Price: 89,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "Alice Johnson",
-          Quantity: 3,
-          TotalAmount: 267,
-        },
-        {
-          Date: "2023-09-03",
-          Customer: "Bob Brown",
-          Quantity: 2,
-          TotalAmount: 178,
-        },
-      ],
-    },
-    {
-      id: 3,
-      Category: "Books",
-      Company: "Penguin Books",
-      Product: "The Great Gatsby",
-      Description: "Classic novel by F. Scott Fitzgerald",
-      Price: 12,
-      CustomDetails: [
-        {
-          Date: "2023-09-02",
-          Customer: "Ella Williams",
-          Quantity: 5,
-          TotalAmount: 60,
-        },
-      ],
-    },
-    {
-      id: 4,
-      Category: "Home Appliances",
-      Company: "Samsung",
-      Product: "Smart Refrigerator",
-      Description: "Refrigerator with smart features and spacious design",
-      Price: 14,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "David Wilson",
-          Quantity: 1,
-          TotalAmount: 14,
-        },
-      ],
-    },
-    {
-      id: 5,
-      Category: "Electronics",
-      Company: "Sony",
-      Product: "PlayStation 5",
-      Description: "Next-gen gaming console",
-      Price: 499,
-      CustomDetails: [
-        {
-          Date: "2023-09-06",
-          Customer: "Sarah Davis",
-          Quantity: 1,
-          TotalAmount: 499,
-        },
-      ],
-    },
-    {
-      id: 6,
-      Category: "Clothing",
-      Company: "Adidas",
-      Product: "Sneakers",
-      Description: "Stylish sneakers for everyday wear",
-      Price: 75,
-      CustomDetails: [
-        {
-          Date: "2023-09-07",
-          Customer: "Michael Lee",
-          Quantity: 2,
-          TotalAmount: 150,
-        },
-      ],
-    },
-    {
-      id: 7,
-      Category: "Electronics",
-      Company: "Samsung",
-      Product: "4K Smart TV",
-      Description: "High-quality 4K television with smart features",
-      Price: 799,
-      CustomDetails: [
-        {
-          Date: "2023-09-08",
-          Customer: "Sophia Anderson",
-          Quantity: 1,
-          TotalAmount: 799,
-        },
-      ],
+      date: "11/11/11",
+      speed: "Apple",
+      totalPages: "iPhone 13",
+      url: "The latest iPhone with advanced features",
+      state: 999,
     },
 ]
 export default function WebsiteList() {
-    const [productList] = useState(products);
+
+  const [productList] = useState(products);
   const [rowsLimit] = useState(5);
   const [rowsToShow, setRowsToShow] = useState(productList.slice(0, rowsLimit));
   const [customPagination, setCustomPagination] = useState<any>([]);
   const [totalPage] = useState(Math.ceil(productList?.length / rowsLimit));
   const [currentPage, setCurrentPage] = useState(0);
+  const [isError , setIsError] = useState(false);
+
+  useEffect(()=>{
+    const fetchWebsites = async () =>{
+      const results = await fetch("/competitor-analysis-scraper/api/site/get-all");
+      if(results.status!==200) setIsError(true);
+      console.log(await results.json());
+    }
+    fetchWebsites();
+  },[])
+
   const nextPage = () => {
     const startIndex = rowsLimit * (currentPage + 1);
     const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
+    const newArray = productList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(currentPage + 1);
   };
   const changePage = (value:any) => {
     const startIndex = value * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
+    const newArray = productList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(value);
   };
   const previousPage = () => {
     const startIndex = (currentPage - 1) * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = products.slice(startIndex, endIndex);
+    const newArray = productList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -215,15 +111,15 @@ export default function WebsiteList() {
                     {data?.id}
                   </td>
                   <td
-                    className={`py-2 px-3 font-normal text-base ${
+                    className={ `py-2 px-3 font-normal text-base ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
                         ? "border-y"
                         : "border-t"
-                    } whitespace-nowrap`}
+                    } whitespace-nowrap` }
                   >
-                    {data?.Category}
+                    {data?.date}
                   </td>
                   <td
                     className={`py-2 px-3 font-normal text-base ${
@@ -234,7 +130,7 @@ export default function WebsiteList() {
                         : "border-t"
                     } whitespace-nowrap`}
                   >
-                    {data?.Company}
+                    {data?.speed}
                   </td>
                   <td
                     className={`py-2 px-3 text-base  font-normal ${
@@ -245,7 +141,7 @@ export default function WebsiteList() {
                         : "border-t"
                     } whitespace-nowrap`}
                   >
-                    {data?.Product}
+                    {data?.totalPages}
                   </td>
                   <td
                     className={`py-2 px-3 text-base  font-normal ${
@@ -256,7 +152,7 @@ export default function WebsiteList() {
                         : "border-t"
                     } min-w-[250px]`}
                   >
-                    {data?.Description}
+                    {data?.url}
                   </td>
                   <td
                     className={`py-5 px-4 text-base  font-normal ${
@@ -267,7 +163,7 @@ export default function WebsiteList() {
                         : "border-t"
                     }`}
                   >
-                    {"$" + data?.Price}
+                    {data?.state}
                   </td>
                 </tr>
               ))}
@@ -275,7 +171,7 @@ export default function WebsiteList() {
           </table>
         </div>
         <div className="w-full  flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-1.5 px-1 items-center">
-          <div className="text-lg">
+          <div className="text-sm text-gray-400">
             Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
             {currentPage == totalPage - 1
               ? productList?.length

@@ -8,7 +8,11 @@ model competitorAnalysisScraperSite {
   id                            String           @id @default(auto()) @map("_id") @db.ObjectId
   site                          String
   state                         Status @default(NEW) 
+  speed                         Float?
+  totalPages                    Float?            
   competitorAnalysisScraperPage competitorAnalysisScraperPage[]
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
 }
 
 model competitorAnalysisScraperPage {

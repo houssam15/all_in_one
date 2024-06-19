@@ -119,3 +119,13 @@ export async function getSiteAnalyticsProgress(url:string): Promise<number|null>
 }
 
 
+export async function getAllSites(): Promise<any|null>{
+  try{
+    const sites = await prisma.competitorAnalysisScraperSite.findMany();
+    return sites;
+  }catch(err){
+    return null;
+  }
+}
+
+
