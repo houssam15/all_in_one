@@ -3,9 +3,9 @@ import { Prisma, PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 
-export async function createNewSite(site: string ){
+export async function createNewSite(url: string ){
   try{
-    return await prisma.competitorAnalysisScraperSite.create({ data : { site : site }});
+    return await prisma.competitorAnalysisScraperSite.create({ data : { url : url }});
   }catch(err){
     return null;
   }
@@ -14,7 +14,7 @@ export async function createNewSite(site: string ){
 
 export async function getSiteByUrl(url:string):Promise<any>{
   try{
-    return await prisma.competitorAnalysisScraperSite.findFirstOrThrow({ where : { site : url}});
+    return await prisma.competitorAnalysisScraperSite.findFirstOrThrow({ where : { url : url}});
   }catch(err){ 
     return null 
   }
@@ -122,7 +122,7 @@ export async function getSiteAnalyticsProgress(url:string): Promise<number|null>
 export async function getAllSites(): Promise<any|null>{
   try{
     const sites = await prisma.competitorAnalysisScraperSite.findMany();
-    return sites;
+    return sites.reverse();
   }catch(err){
     return null;
   }

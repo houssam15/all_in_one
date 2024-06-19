@@ -1,52 +1,48 @@
 "use client"
 import React,{ useState, useMemo, useEffect }  from "react";
-const products = [
-    {
-      id: 1,
-      date: "11/11/11",
-      speed: "Apple",
-      totalPages: "iPhone 13",
-      url: "The latest iPhone with advanced features",
-      state: 999,
-    },
-]
+import { Spinner } from "flowbite-react";
+
 export default function WebsiteList() {
 
-  const [productList] = useState(products);
-  const [rowsLimit] = useState(5);
-  const [rowsToShow, setRowsToShow] = useState(productList.slice(0, rowsLimit));
-  const [customPagination, setCustomPagination] = useState<any>([]);
-  const [totalPage] = useState(Math.ceil(productList?.length / rowsLimit));
+  const [sitesList  ,setSitesList ] = useState<any[]>([]);
+  const [rowsLimit , setRowsLimit] = useState(5);
+  const [rowsToShow, setRowsToShow] = useState<any[]>([]);
+  const [customPagination, setCustomPagination] = useState<any[]>([]);
+  const [totalPage , setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [isError , setIsError] = useState(false);
+  const [isRefresh , setIsRefresh] = useState(false);
+  const fetchWebsites = async () =>{
+    const results = await fetch("/competitor-analysis-scraper/api/site/get-all");
+    if(results.status!==200) return setIsError(true);
+    const {data} = await results.json();
+    setSitesList(data[0]);
+    setRowsToShow(data[0].slice(0, rowsLimit));
+    setTotalPage(Math.ceil(data[0]?.length / rowsLimit));
+  }
 
   useEffect(()=>{
-    const fetchWebsites = async () =>{
-      const results = await fetch("/competitor-analysis-scraper/api/site/get-all");
-      if(results.status!==200) setIsError(true);
-      console.log(await results.json());
-    }
     fetchWebsites();
-  },[])
+  },[]);
 
   const nextPage = () => {
     const startIndex = rowsLimit * (currentPage + 1);
     const endIndex = startIndex + rowsLimit;
-    const newArray = productList.slice(startIndex, endIndex);
+    const newArray = sitesList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(currentPage + 1);
   };
   const changePage = (value:any) => {
     const startIndex = value * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = productList.slice(startIndex, endIndex);
+    const newArray = sitesList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(value);
   };
   const previousPage = () => {
     const startIndex = (currentPage - 1) * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = productList.slice(startIndex, endIndex);
+    const newArray = sitesList.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -56,37 +52,49 @@ export default function WebsiteList() {
   };
   useMemo(() => {
     setCustomPagination(
-      Array(Math.ceil(productList?.length / rowsLimit)).fill(null)
+      Array(Math.ceil(sitesList?.length / rowsLimit)).fill(null)
     );
   }, []);
+
+  const refreshList =async () => {
+    setIsRefresh(true);
+    await fetchWebsites();
+    setIsRefresh(false);
+  }
     return (
-        <div className="w-full  flex min-h-80 items-center justify-center my-5">
+        <div className="w-full  flex min-h-80 items-center justify-center my-4">
             <div className="w-full max-w-4xl px-2">
-        <div>
+        <div className="flex items-center justify-between">
+          <div className="w-20"></div>
           <h1 className="text-4xl w-fit mx-auto mb-5">
           My websites
           </h1>
+          <div className="w-20">
+              <div onClick={refreshList} className="bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200">
+                {isRefresh?<Spinner aria-label="loading" className="mx-auto" />:"refresh"}
+              </div>
+          </div>
         </div>
         <div className="w-full overflow-x-scroll md:overflow-auto  max-w-7xl 2xl:max-w-none mt-2">
           <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter border ">
             <thead className="rounded-lg text-base text-white font-semibold w-full">
               <tr className="bg-[#222E3A]/[6%]">
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
+                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   ID
                 </th>
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
+                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   Date
                 </th>
-                <th className="py-3 px-3  justify-center gap-1 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
+                <th className="py-3 px-3  justify-center gap-1 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   Speed
                 </th>
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
+                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   Total pages
                 </th>
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
+                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   Url
                 </th>
-                <th className="flex items-center py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap gap-1">
+                <th className="flex items-center py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap gap-1">
                   State
                 </th>
               </tr>
@@ -100,7 +108,7 @@ export default function WebsiteList() {
                   key={index}
                 >
                   <td
-                    className={`py-2 px-3 font-normal text-base ${
+                    className={`py-2 px-3 font-normal text-center  ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -111,7 +119,7 @@ export default function WebsiteList() {
                     {data?.id}
                   </td>
                   <td
-                    className={ `py-2 px-3 font-normal text-base ${
+                    className={ `py-2 px-3 font-normal text-center ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -119,10 +127,10 @@ export default function WebsiteList() {
                         : "border-t"
                     } whitespace-nowrap` }
                   >
-                    {data?.date}
+                    {data?.createdAt.split("T")[0]}
                   </td>
                   <td
-                    className={`py-2 px-3 font-normal text-base ${
+                    className={`py-2 px-3 font-normal text-center ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -130,10 +138,10 @@ export default function WebsiteList() {
                         : "border-t"
                     } whitespace-nowrap`}
                   >
-                    {data?.speed}
+                    {data?.speed??"-----"}
                   </td>
                   <td
-                    className={`py-2 px-3 text-base  font-normal ${
+                    className={`py-2 px-3 text-center  font-normal ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -141,10 +149,10 @@ export default function WebsiteList() {
                         : "border-t"
                     } whitespace-nowrap`}
                   >
-                    {data?.totalPages}
+                    {data?.totalPages??"------"}
                   </td>
                   <td
-                    className={`py-2 px-3 text-base  font-normal ${
+                    className={`py-2 px-3 text-center  font-normal ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -155,7 +163,7 @@ export default function WebsiteList() {
                     {data?.url}
                   </td>
                   <td
-                    className={`py-5 px-4 text-base  font-normal ${
+                    className={`py-5 px-4 text-center  font-normal ${
                       index == 0
                         ? "border-t-2 border-black"
                         : index == rowsToShow?.length
@@ -166,6 +174,7 @@ export default function WebsiteList() {
                     {data?.state}
                   </td>
                 </tr>
+                
               ))}
             </tbody>
           </table>
@@ -174,9 +183,9 @@ export default function WebsiteList() {
           <div className="text-sm text-gray-400">
             Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
             {currentPage == totalPage - 1
-              ? productList?.length
+              ? sitesList?.length
               : (currentPage + 1) * rowsLimit}{" "}
-            of {productList?.length} entries
+            of {sitesList?.length} entries
           </div>
           <div className="flex">
             <ul

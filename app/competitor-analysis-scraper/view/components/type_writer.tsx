@@ -16,7 +16,21 @@ export default function TypeWriter({ text, delay  ,state}:{text:string,delay:num
         }
     },[currentIndex , delay , text])
     return ( 
-        <span>{currentText}</span>
+        <>
+        <style jsx>{`
+        @keyframes blinkTextCursor {
+          from {
+            border-right: transparent;
+          }
+          to {
+            border-right:1px solid  gray;
+          }
+        }
+      `}</style>
+        <span  style={!passed?{
+          animation: 'blinkTextCursor 500ms steps(2) infinite normal',
+        }:{}}>{currentText}</span>
+        </>
     );
     
   }
