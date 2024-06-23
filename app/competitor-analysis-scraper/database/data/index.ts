@@ -129,3 +129,22 @@ export async function getAllSites(): Promise<any|null>{
 }
 
 
+export async function deleteWebsite(id:string): Promise<any|null>{
+  try{
+    const result = await prisma.competitorAnalysisScraperSite.delete({where:{id}});
+    return result;
+  }catch(err){
+    return null;
+  }
+}
+
+
+export async function getAllPages() : Promise<any|null>{
+  try{
+    const result = await prisma.competitorAnalysisScraperPage.findMany();
+    return result;
+  }catch(err){
+    return null;
+  }
+}
+

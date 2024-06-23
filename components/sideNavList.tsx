@@ -17,7 +17,6 @@ export default function SideNavList() {
         const response = await axios.get("/modules/api/menu");
         setMenu(response.data.data.menu);
       } catch (error) {
-        console.log(error);
         setIsError(true);
       } finally {
         setIsLoading(false);

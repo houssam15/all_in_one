@@ -1,7 +1,8 @@
 "use client"
-import React,{ useState, useMemo, useEffect }  from "react";
+import React,{ useState, useMemo, useEffect ,useCallback}  from "react";
 import { Spinner } from "flowbite-react";
-
+import "@fortawesome/fontawesome-free/css/all.css";
+import {ConfirmationModal} from ".";
 export default function WebsiteList() {
 
   const [sitesList  ,setSitesList ] = useState<any[]>([]);
@@ -10,12 +11,19 @@ export default function WebsiteList() {
   const [customPagination, setCustomPagination] = useState<any[]>([]);
   const [totalPage , setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [isError , setIsError] = useState(false);
+  const [error , setError] = useState<string[]|null>(null);
   const [isRefresh , setIsRefresh] = useState(false);
+  const [modalVisibleRows, setModalVisibleRows] = useState<{ [key: string]: boolean }>({});
+
+  const showMessage = (data:any,delay:number)=>{
+     setError(data?.errors);
+    setTimeout( () => setError(null), delay );
+  }
+
   const fetchWebsites = async () =>{
     const results = await fetch("/competitor-analysis-scraper/api/site/get-all");
-    if(results.status!==200) return setIsError(true);
     const {data} = await results.json();
+    if(results.status!==200) return showMessage(data,3000);
     setSitesList(data[0]);
     setRowsToShow(data[0].slice(0, rowsLimit));
     setTotalPage(Math.ceil(data[0]?.length / rowsLimit));
@@ -61,7 +69,22 @@ export default function WebsiteList() {
     await fetchWebsites();
     setIsRefresh(false);
   }
+
+  const handleDelete = (id:string) => {
+    //setIsModalVisible(!isModalVisible);    
+    setModalVisibleRows((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleModalConfirm = useCallback(async (isConfirmed:boolean , data:any) => {
+    if (isConfirmed) {
+      const result = await fetch("/competitor-analysis-scraper/api/site/delete?id="+data?.id);
+      if(result.status!==200) return showMessage(await result.json(),3000);
+      await refreshList();
+    }
+  }, []);
+
     return (
+      <>
         <div className="w-full  flex min-h-80 items-center justify-center my-4">
             <div className="w-full max-w-4xl px-2">
         <div className="flex items-center justify-between">
@@ -79,9 +102,7 @@ export default function WebsiteList() {
           <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter border ">
             <thead className="rounded-lg text-base text-white font-semibold w-full">
               <tr className="bg-[#222E3A]/[6%]">
-                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
-                  ID
-                </th>
+                
                 <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
                   Date
                 </th>
@@ -97,27 +118,49 @@ export default function WebsiteList() {
                 <th className="flex items-center py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap gap-1">
                   State
                 </th>
+                <th className="py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap">
+                  Action
+                </th>
+              
               </tr>
             </thead>
-            <tbody>
+            <tbody className="relative">
+            <div className="absolute top-1 w-full ">
+             {error?.slice(0,2).map((elm,index)=>( 
+                <div className="w-1/2 mx-auto bg-red-200  rounded-sm p-2 text-center ">
+                  {elm}
+                </div>  
+             ))} 
+            </div>
+             
               {rowsToShow?.map((data, index) => (
+                <>
+                {modalVisibleRows[data?.id] && <ConfirmationModal data={data} onConfirm={handleModalConfirm} setModalVisibilite={() => setModalVisibleRows((prev:any) => ({ ...prev, [data?.id]: !prev[data?.id] }))}  content={(
+                  <>
+                  <svg
+                  className="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto"
+                  aria-hidden="true"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <p className="mb-4 text-gray-500 dark:text-gray-300">
+                  delete "{data?.url}" ?
+                </p>
+                  </>
+                )}/>}  
                 <tr
                   className={`${
                     index % 2 == 0 ? "bg-white" : "bg-[#222E3A]/[6%]"
                   }`}
                   key={index}
                 >
-                  <td
-                    className={`py-2 px-3 font-normal text-center  ${
-                      index == 0
-                        ? "border-t-2 border-black"
-                        : index == rowsToShow?.length
-                        ? "border-y"
-                        : "border-t"
-                    } whitespace-nowrap`}
-                  >
-                    {data?.id}
-                  </td>
                   <td
                     className={ `py-2 px-3 font-normal text-center ${
                       index == 0
@@ -173,8 +216,22 @@ export default function WebsiteList() {
                   >
                     {data?.state}
                   </td>
+                   <td
+                    className={`py-2 px-3 font-normal text-center  ${
+                      index == 0
+                        ? "border-t-2 border-black"
+                        : index == rowsToShow?.length
+                        ? "border-y"
+                        : "border-t"
+                    } whitespace-nowrap`}
+                  >
+                    {/* {data?.id} */}
+                    <div>
+                      <i onClick={()=>handleDelete(data?.id)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
+                    </div>
+                  </td>
                 </tr>
-                
+                </>  
               ))}
             </tbody>
           </table>
@@ -199,7 +256,7 @@ export default function WebsiteList() {
                     ? "bg-[#cccccc] pointer-events-none"
                     : " cursor-pointer"
                 }
-  `}
+  `           }
                 onClick={previousPage}
               >
                 <img src="https://www.tailwindtap.com/assets/travelagency-admin/leftarrow.svg" />
@@ -232,6 +289,7 @@ export default function WebsiteList() {
         </div>
       </div>
         </div>
+    </>
     );
   }
   
