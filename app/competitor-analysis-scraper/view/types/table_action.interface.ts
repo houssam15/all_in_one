@@ -4,9 +4,9 @@ export enum Position {
 }
 
 export interface Action{
-    key : number;
     title : string;
     isAction : boolean;
     action : any;
-    position: Position
+    position: Position;
+    classes? : string;
 }

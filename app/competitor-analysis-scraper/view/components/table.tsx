@@ -4,7 +4,7 @@ import {Column , Action , Position} from "../types";
 import { Spinner } from "flowbite-react";
 
 
-export default function Table({columns , data , actions }:{columns:Column[],data:any[],actions?:Action[]}) {
+export default function Table({title ,columns , data , actions }:{title:string,columns:Column[],data:any[],actions?:Action[]}) {
 
     const [dataList  ,setDataList ] = useState<any[]>(data);
     const [rowsLimit , setRowsLimit] = useState(5);
@@ -53,19 +53,19 @@ export default function Table({columns , data , actions }:{columns:Column[],data
             <div className="w-full max-w-4xl px-2">
                     <div className="flex items-center justify-between">
                         <div className="min-w-20 flex flex-row gap-1">
-                          {actions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map(elm => (
-                             <div key={elm.key} onClick={elm.action} className="bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2">
-                             {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
+                          {actions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map((elm,index) => (
+                             <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
+                                   {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
                           ))}
                         </div>
-                            <h1 className="text-4xl w-fit mx-auto mb-5">
-                                Pages
+                            <h1 className="text-4xl w-fit mx-auto text-center">
+                                {title}
                             </h1>
                         <div className="min-w-20 flex flex-row gap-1">
-                        {actions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map(elm => (
-                             <div key={elm.key} onClick={elm.action} className="bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2">
-                             {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
+                        {actions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
+                             <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
+                                   {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
                           ))}
                         </div>
@@ -82,7 +82,7 @@ export default function Table({columns , data , actions }:{columns:Column[],data
                                     </tr>
                               </thead>
                               <tbody className="relative">
-                                   {dataList.map((elm,index)=>(
+                                   {dataList.map((elm,index) => (
                                     <>
                                     <tr
                                         className={`${
@@ -101,7 +101,7 @@ export default function Table({columns , data , actions }:{columns:Column[],data
                                                 : "border-t"
                                             } whitespace-nowrap` }
                                           >
-                                              {elm[column.key]}
+                                              {(elm[column.key]??column.defaultValue).toString()}
                                           </td>
                                         ))}
                                        

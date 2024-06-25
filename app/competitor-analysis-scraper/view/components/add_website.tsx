@@ -49,7 +49,7 @@ export default function AddWebsite() {
                         <input type="text" value={url} onChange={(e)=>setUrl(e.target.value)} name="url" className="w-full  outline-none border border-gray-300 py-2 px-2 rounded-sm "/>
                         <div className=" absolute top-[120%] w-full">
                           {error?.slice(0,2).map((elm,index)=>(
-                            <div className="bg-red-300 mb-2 p-2">
+                            <div key={index} className="bg-red-300 mb-2 p-2">
                               {elm}
                             </div>
                           ))}

@@ -8,8 +8,8 @@ export default function Home() {
           <AddWebsite/>
           <WebsiteList />
           <Pages />
-          <WebsiteAnalytics/>
-          <Footer/>
+          {/* <WebsiteAnalytics/> */}
+          {/* <Footer/> */}
       </div>
     );
 }

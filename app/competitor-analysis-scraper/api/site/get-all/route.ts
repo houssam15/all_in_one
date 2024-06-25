@@ -4,5 +4,5 @@ import {getAllSites} from "../../../controller";
 export async function GET (req:NextRequest){
     const result = await getAllSites();
     if(result.hasErrors()) return NextResponse.json({errors:result.getErrors()},{status: 400});
-    return NextResponse.json({data:result.getResults()},{status: 200});
+    return NextResponse.json({sites:result.getResults()},{status: 200});
 } 
