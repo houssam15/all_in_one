@@ -58,6 +58,7 @@ export default function PagesList({width }:{width:string}) {
                     ))
                      }
             </div>}
+            
             <Table 
                 key={data.length}
                 title={"Pages"}
