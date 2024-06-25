@@ -1,4 +1,4 @@
-export interface Column{
+export interface TableColumn{
     key : string;
     title : string;
     classes : string;
