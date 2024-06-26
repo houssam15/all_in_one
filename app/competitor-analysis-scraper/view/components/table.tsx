@@ -80,7 +80,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                              {elm.title}
                                            </th>
                                         ))}
-                                        {rowActions != null ? <th key={`${Date.now()}`}>Actions</th> : <></>}
+                                        {rowActions != null ? <th key={`${Date.now()}`} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap`}>Actions</th> : <></>}
                                     </tr>
                               </thead>
                               <tbody className="relative">
@@ -109,7 +109,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                         {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center border-t-2 border-black whitespace-nowrap`}>
                                           {rowActions.map((action , index)=>(
                                                               <div key={index}>
-                                                               <i onClick={action.controller(elm)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
+                                                               <i onClick={(e)=>action.controller(elm)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
                                                              </div>
                                           ))}
                                         </td> : <></>}

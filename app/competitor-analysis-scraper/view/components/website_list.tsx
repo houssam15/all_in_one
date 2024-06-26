@@ -38,6 +38,10 @@ export default function WebsiteList() {
     setIsRefresh(false);
   }
 
+  const deletePage = async (page:any) => {
+    console.log('xxxxxxxxxx' , page);
+  }
+
     return (
       <div className="min-h-80">
         <Table 
@@ -51,7 +55,7 @@ export default function WebsiteList() {
               ]
             }
             rowActions={[
-              {icon:"" , controller : }
+              { icon:"fa-solid fa-trash" , controller : deletePage }
             ]}
             />
       </div>
