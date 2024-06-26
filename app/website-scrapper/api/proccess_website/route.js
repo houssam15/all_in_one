@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
- import {createNewWebsite, getAllWebsites,proccessWebsite} from "./../../controller";
-//http://localhost:3000/competitor-analysis-scraper/api/site/create
-export async function GET (req){
-    const response = {module : "website-scrapper" , api:"/get_all" , action:"get all websites"}
- 
-    const data = req.json() ;
+import {createNewWebsite, processWebsite, getSite} from "./../../controller";
 
-    const {site } = data;
+ //http://localhost:3000/competitor-analysis-scraper/api/site/create
+export async function GET(req){
+    const response = {module : "website-scrapper" , api:"/proccess_website" , action:"process a website"}
 
-    const res = await proccessWebsite(site);
+
+    
+    const url =req.nextUrl.searchParams.get('site');
+
+   
+
+    const res = await processWebsite(url);
+
+    // return NextResponse.json({ ...response, data: { message: site } }, { status: 200 });
 
     if(res) 
       return NextResponse.json({...response , data:{message : "proccessing"}},{status: 200});
