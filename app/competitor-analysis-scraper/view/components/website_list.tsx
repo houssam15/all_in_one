@@ -2,10 +2,10 @@
 import React,{ useState, useEffect }  from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 import {Table} from ".";
-import {Column , Position} from "../types";
+import {TableColumn , Position} from "../types";
 
 export default function WebsiteList() {
-  const [columns , setColumns] = useState<Column[]>([
+  const [columns , setColumns] = useState<TableColumn[]>([
     {key:"createdAt", title:"Date" , classes:"" , defaultValue:"-----"},
     {key:"speed", title:"Speed" , classes:"" , defaultValue:"-----"},
     {key:"totalPages", title:"Total pages" , classes:"" , defaultValue:"-----"},
@@ -45,11 +45,14 @@ export default function WebsiteList() {
             title="My Websites"
             columns={columns}
             data={data}
-            actions={
+            tableActions={
               [
                 {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList ,classes:"w-20"},
               ]
             }
+            rowActions={[
+              {icon:"" , controller : }
+            ]}
             />
       </div>
     );

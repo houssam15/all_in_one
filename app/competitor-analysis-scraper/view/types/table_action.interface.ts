@@ -3,7 +3,7 @@ export enum Position {
     RIGHT
 }
 
-export interface Action{
+export interface TableAction{
     title : string;
     isAction : boolean;
     action : any;

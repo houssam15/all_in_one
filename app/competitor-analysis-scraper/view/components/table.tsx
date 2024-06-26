@@ -1,10 +1,10 @@
 "use client"
 import React ,{useState , useMemo} from "react";
-import {Column , Action , Position} from "../types";
+import {TableColumn , TableAction , RowAction, Position} from "../types";
 import { Spinner } from "flowbite-react";
 
 
-export default function Table({title ,columns , data , actions }:{title:string,columns:Column[],data:any[],actions?:Action[]}) {
+export default function Table({title ,columns , data , tableActions , rowActions}:{title:string,columns:TableColumn[],data:any[],tableActions?:TableAction[] , rowActions?:RowAction[]}) {
 
     const [dataList  ,setDataList ] = useState<any[]>(data);
     const [rowsLimit , setRowsLimit] = useState(5);
@@ -20,15 +20,15 @@ export default function Table({title ,columns , data , actions }:{title:string,c
         const newArray = dataList.slice(startIndex, endIndex);
         setRowsToShow(newArray);
         setCurrentPage(currentPage + 1);
-      };
-      const changePage = (value:any) => {
+    };
+    const changePage = (value:any) => {
         const startIndex = value * rowsLimit;
         const endIndex = startIndex + rowsLimit;
         const newArray = dataList.slice(startIndex, endIndex);
         setRowsToShow(newArray);
         setCurrentPage(value);
-      };
-      const previousPage = () => {
+    };
+    const previousPage = () => {
         const startIndex = (currentPage - 1) * rowsLimit;
         const endIndex = startIndex + rowsLimit;
         const newArray = dataList.slice(startIndex, endIndex);
@@ -38,22 +38,23 @@ export default function Table({title ,columns , data , actions }:{title:string,c
         } else {
           setCurrentPage(0);
         }
-      };
-      useMemo(() => {
+    };
+    useMemo(() => {
         setCustomPagination(
           Array(Math.ceil(dataList?.length / rowsLimit)).fill(null)
         );
       }, []);
 
-      const refreshList =async () => {
+    const refreshList =async () => {
         setIsRefresh(!isRefresh); 
-      }
+    }
+    
     return (
         <div className="w-full  flex  items-center justify-center my-4">
             <div className="w-full max-w-4xl px-2">
                     <div className="flex items-center justify-between">
                         <div className="min-w-20 flex flex-row gap-1">
-                          {actions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map((elm,index) => (
+                          {tableActions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
@@ -63,7 +64,7 @@ export default function Table({title ,columns , data , actions }:{title:string,c
                                 {title}
                             </h1>
                         <div className="min-w-20 flex flex-row gap-1">
-                        {actions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
+                        {tableActions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
@@ -78,12 +79,12 @@ export default function Table({title ,columns , data , actions }:{title:string,c
                                              <th key={index} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap ${elm.classes}`}>
                                              {elm.title}
                                            </th>
-                                        ))}                                           
+                                        ))}
+                                        {rowActions != null ? <th key={`${Date.now()}`}>Actions</th> : <></>}
                                     </tr>
                               </thead>
                               <tbody className="relative">
-                                   {dataList.map((elm,index) => (
-                                    <>
+                                   {rowsToShow.map((elm,index) => (
                                     <tr
                                         className={`${
                                           index % 2 == 0 ? "bg-white" : "bg-[#222E3A]/[6%]"
@@ -91,7 +92,7 @@ export default function Table({title ,columns , data , actions }:{title:string,c
                                         key={index}
                                     >
                                         {columns.map((column,index) => (
-                                            <td
+                                          <td
                                             key={index}
                                             className={ `py-2 px-3 font-normal text-center ${
                                               index == 0
@@ -102,12 +103,21 @@ export default function Table({title ,columns , data , actions }:{title:string,c
                                             } whitespace-nowrap` }
                                           >
                                               {(elm[column.key]??column.defaultValue).toString()}
-                                          </td>
+                                          </td>                                          
                                         ))}
-                                       
+                                        
+                                        {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center border-t-2 border-black whitespace-nowrap`}>
+                                          {rowActions.map((action , index)=>(
+                                                              <div key={index}>
+                                                               <i onClick={action.controller(elm)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
+                                                             </div>
+                                          ))}
+                                        </td> : <></>}
+                                          
                                     </tr>
-                                    </>
-                                   ))} 
+                                   )
+                                   )
+                                   } 
                               </tbody>
                         </table>
                     </div>
