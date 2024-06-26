@@ -37,11 +37,9 @@ export async function GetSiteBase(site){
    
     try{
       
-      const data = await prisma.websiteScrapperSite.findUnique({
-        where: {
-          id: site.toString(),
-        },
-      });
+      const data = await prisma.websiteScrapperSite.findFirstOrThrow({ where : { site : site}});
+
+      console.log(data)
         return data
       }catch(err){
         console.error(err);
