@@ -3,3 +3,4 @@ export interface RowAction{
     controller : any;
     classes? : string;
 }
+

@@ -28,14 +28,20 @@ export async function saveSitePages(site:any , pages : string[]):Promise<string[
    
         const pg = await prisma.competitorAnalysisScraperPage.findFirst({where:{url : page}});
         if(pg!=null) continue;
-        await prisma.competitorAnalysisScraperPage.create({data:{
-          siteId : site.id,
-          url : page,
-        }});
+        await prisma.competitorAnalysisScraperPage.create({
+          data:{
+            site:{
+              connect:{id : site.id}
+            },
+            url : page,
+          },
+          include:{site:true}
+        });
         new_urls.push(page); 
     }
     return new_urls;
   }catch(err){
+    console.error(err);
     return null;
   }
 }
@@ -141,9 +147,21 @@ export async function deleteWebsite(id:string): Promise<any|null>{
 
 export async function getAllPages() : Promise<any|null>{
   try{
-    const result = await prisma.competitorAnalysisScraperPage.findMany();
-    return result;
+
+    const result = await prisma.competitorAnalysisScraperPage.findMany(
+      {
+        include:{
+          site:{
+            select:{
+              url:true
+            }
+          }
+        }
+      }
+    );
+    return result.map(elm => ({...elm , site : elm.site.url}));
   }catch(err){
+    console.error(err)
     return null;
   }
 }
