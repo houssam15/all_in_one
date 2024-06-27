@@ -63,4 +63,16 @@ model websiteScrapperSite {
   dateAt        DateTime @db.Date
 }
 
+model websiteScrapperPage {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
+model websiteScrapperImage {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
   

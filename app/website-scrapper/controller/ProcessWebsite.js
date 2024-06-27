@@ -1,42 +1,19 @@
 "use server"
 const puppeteer = require('puppeteer');
+const { getPages } = require('./getPages');
+const { getImages } = require('./getImages');
 
 export async function processWebsite(site) {
-    let browser;
+  
     try {
-        browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto("https://quadmarrakesh.ma");
 
-        const links = await page.evaluate(() => {
-            const uniqueLinks = new Set();
-            return Array.from(document.querySelectorAll('a'))
-                .map(anchor => ({
-                    href: anchor.href,
-                    text: anchor.textContent.trim()
-                }))
-                .filter(link => link.href.startsWith('http'))
-                .filter(link => {
-                    if (uniqueLinks.has(link.href)) {
-                        return false;
-                    } else {
-                        uniqueLinks.add(link.href);
-                        return true;
-                    }
-                })
-                .map(link => ({
-                    ...link,
-                    broken: !link.href
-                }));
-        });
+        const pages = await getPages(site)
+        // const images = await getImages(site)
 
-        console.log(links);
-        // Return links as JSON
-        return { links };
+        console.log(pages);
+
     } catch (err) {
         console.error('Error processing website:', err);
         return false;
-    } finally {
-        if (browser) await browser.close();
-    }
+    }  
 }

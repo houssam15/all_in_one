@@ -16,7 +16,7 @@ export async function GET(req){
     // return NextResponse.json({ ...response, data: { message: site } }, { status: 200 });
 
     if(res) 
-      return NextResponse.json({...response , data:{message : "proccessing"}},{status: 200});
+      return NextResponse.json({...response , site : url, data:res },{status: 200});
     if(!res) 
       return NextResponse.json({...response , data :{ message : "failed !"}},{status: 400});
    
