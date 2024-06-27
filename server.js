@@ -5,9 +5,10 @@ const fs = require('fs');
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+const server = express();
+
 
 app.prepare().then(() => {
-  const server = express();
 
   // Serve static files from multiple directories
   fs.readdirSync(path.join(__dirname , "app")).forEach(module => {
