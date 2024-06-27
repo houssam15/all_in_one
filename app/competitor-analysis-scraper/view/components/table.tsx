@@ -102,14 +102,17 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                                 : "border-t"
                                             } whitespace-nowrap` }
                                           >
-                                              {(elm[column.key]??column.defaultValue).toString()}
+                                              {column?.builder==null?
+                                               (elm[column.key]??column.defaultValue).toString():
+                                               column.builder(elm[column.key]??column.defaultValue)
+                                              }
                                           </td>                                          
                                         ))}
                                         
-                                        {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center border-t-2 border-black whitespace-nowrap`}>
+                                        {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center flex justify-center gap-2 border-t-2 border-black whitespace-nowrap`}>
                                           {rowActions.map((action , index)=>(
                                                               <div key={index}>
-                                                               <i onClick={(e)=>action.controller(elm)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
+                                                               <i onClick={(e)=>action.controller(elm)} className={`${action.icon} cursor-pointer mx-auto ${action.classes}`}></i> 
                                                              </div>
                                           ))}
                                         </td> : <></>}

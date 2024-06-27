@@ -7,11 +7,14 @@ export default function PagesList() {
     const [columns , setColumns] = useState<TableColumn[]>([
         {key:"site", title:"Site" , classes:"" , defaultValue:"-----"},
         {key:"url", title:"Page" , classes:"" , defaultValue:"-----"},
-        {key:"is_proccessed", title:"Is proccessed" , classes:"" , defaultValue:"-----"},
+        {key:"is_proccessed", title:"Is proccessed" , classes:"" , defaultValue:"-----",
+         builder:(data:any)=>(data==true?<i className="fa-solid fa-check text-red-600"></i>:<i className="fa-solid fa-xmark text-blue-500"></i>) 
+        },
     ]);
     const [data , setData] = useState<any[]>([]);
     const [errors,setErrors] = useState<string[]|null>(null);
     const [isRefresh , setIsRefresh]  =useState(false);
+    const [isAnalyze , setIsAnalyze]  =useState(false);
     const [errorAlertDuration] = useState<number>(3000);
 
     useEffect(()=>{
@@ -33,6 +36,13 @@ export default function PagesList() {
        setIsRefresh(true);
        await fetchPages().finally(()=>setIsRefresh(false));
     }
+
+    const analyzeAll = async()=>{
+        setIsAnalyze(true);
+        setTimeout(()=>{
+            setIsAnalyze(false)
+        },3000)
+     }
      
     return (
        <div className={`min-h-80 ${errors?"relative":""}`}>
@@ -45,8 +55,24 @@ export default function PagesList() {
           tableActions={
             [
               {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList , classes:"w-20"},
+              {title:"analyze all",position: Position.LEFT ,isAction:isAnalyze , action : analyzeAll , classes:"w-32"},
             ]
-        }/>
+          }
+          rowActions={
+            [
+                {
+                    icon:"fa-solid fa-magnifying-glass-chart",
+                    controller:()=>console.log("TEST") ,
+                    classes:"text-blue-600 hover:scale-110"
+                },
+                {
+                    icon:"fa-solid fa-chart-line",
+                    controller:()=>console.log("TEST") ,
+                    classes:"text-green-600 hover:scale-110"
+                }
+            ]
+          }
+        />
         </div>
     );
 }

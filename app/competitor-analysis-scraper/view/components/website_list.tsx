@@ -75,11 +75,12 @@ export default function WebsiteList() {
             ]}
             rowActions={[
               { 
-                icon:"fa-solid fa-trash" ,
-                controller : (site:any)=>setDeleteDialog({state:true , data:site}) 
+                icon:"fa-regular fa-trash-can" ,
+                controller : (site:any)=>setDeleteDialog({state:true , data:site}) ,
+                classes:"text-red-600 hover:scale-110"
               }
             ]}
-            />
+          />
       </div>
   );
 }

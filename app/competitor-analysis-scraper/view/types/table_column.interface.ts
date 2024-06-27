@@ -3,4 +3,5 @@ export interface TableColumn{
     title : string;
     classes : string;
     defaultValue:string;
+    builder?:any;
 }
