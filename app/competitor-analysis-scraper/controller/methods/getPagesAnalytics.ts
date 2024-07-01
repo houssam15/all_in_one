@@ -15,6 +15,6 @@ export async function getPagesAnalytics(site:string|null , max : string | null):
         if(pages.indexOf(page)+1==browser.getMax()) break;
     }
     const analytic_progress = await getSiteAnalyticsProgress(site as string);
-    return response.addResult({site : site as string , progress : analytic_progress});
+    return response.setResults({site : site as string , progress : analytic_progress});
 }
 

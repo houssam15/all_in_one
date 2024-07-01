@@ -25,7 +25,8 @@ const runCronJob = async () => {
   try {
     //console.log("cron executed");
     const site = await axios.get(host+'/competitor-analysis-scraper/api/site/get-working-site');
-    const response = await axios.get(host+'/competitor-analysis-scraper/api/pages/get-analytics?url='+site.data.site);
+    console.log(site.data)
+    const response = await axios.get(host+'/competitor-analysis-scraper/api/pages/get-analytics?url='+site.data.site.url);
      // Notify all connected clients
     sockets.forEach((socket) => {
       socket.emit('analytics-updated', response.data);
@@ -47,12 +48,17 @@ const stopCron = () => {
 runCronJob();
 
 app.get('/api/competitor-analysis-scraper/start-cron', (req, res) => {
-  if (!job) {
-    job = cron.schedule('*/1 * * * *', runCronJob);
-    res.status(200).json({ message: 'Cron job started' });
-  } else {
-    res.status(400).json({ message: 'Cron job is already running' });
+  try{
+    if (!job) {
+      job = cron.schedule('*/1 * * * *', runCronJob);
+      res.status(200).json({status:"OK"});
+    } else {
+      res.status(200).json({status:"KO"});
+    }
+  }catch(err){
+      res.status(200).json({status:"KO"});
   }
+
 });
 
 app.get('/api/competitor-analysis-scraper/stop-cron', (req, res) => {

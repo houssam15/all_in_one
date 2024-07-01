@@ -1,7 +1,8 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import {Table , ErrorAlert} from ".";
-import {TableColumn , Position } from "../types";
+import {Table , MyAlert} from ".";
+import {TableColumn , Position , AlertType } from "../types";
+import crypto from 'crypto';
 
 export default function PagesList() {  
     const [columns , setColumns] = useState<TableColumn[]>([
@@ -12,9 +13,9 @@ export default function PagesList() {
         },
     ]);
     const [data , setData] = useState<any[]>([]);
-    const [errors,setErrors] = useState<string[]|null>(null);
+    const [alertData,setAlertData] = useState<{messages:string[],type:AlertType}|null>(null);
     const [isRefresh , setIsRefresh]  =useState(false);
-    const [isAnalyze , setIsAnalyze]  =useState(false);
+   // const [isAnalyze , setIsAnalyze]  =useState(false);
     const [errorAlertDuration] = useState<number>(3000);
 
     useEffect(()=>{
@@ -25,10 +26,11 @@ export default function PagesList() {
         try{
             const result = await fetch("/competitor-analysis-scraper/api/pages/get-all");
             const content =  await result.json();
-            if(result.status!==200) return setErrors(content?.errors);
+            if(result.status!==200) return setAlertData({messages:content?.errors , type:AlertType.ERROR});
             setData( content.pages||[]);
+            setAlertData({messages:["data loaded succesfully"] , type:AlertType.INFO});
         }catch(err){
-            setErrors(["Internal server error !"]);
+            setAlertData({messages:["Internal server error !"] , type:AlertType.ERROR});
         }
     }
 
@@ -37,28 +39,33 @@ export default function PagesList() {
        await fetchPages().finally(()=>setIsRefresh(false));
     }
 
-    const analyzeAll = async()=>{
-        setIsAnalyze(true);
-        setTimeout(()=>{
-            setIsAnalyze(false)
-        },3000)
-     }
+    // const analyzeAll = async()=>{
+    //     setIsAnalyze(true);
+    //     setTimeout(()=>{
+    //         setIsAnalyze(false)
+    //     },3000)
+    //  }
      
+    const hashData = (data: any) => {
+        return crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
+       };
     return (
-       <div className={`min-h-80 ${errors?"relative":""}`}>
-       {errors && <ErrorAlert errors={errors} hideDuration={errorAlertDuration} hideAction={()=>setErrors([])}/>}
+       <div className={`min-h-80`}>
+        <div className={`${alertData?"flex relative bg-gray-100":""} items-center w-full h-14`}>
+                {alertData && <MyAlert alertData={alertData} hideDuration={errorAlertDuration} hideAction={()=>setAlertData(null)}/>}
+        </div>
        <Table 
-          key={data.length}
+          key={hashData(data)}
           title={"Pages"}
           columns={columns} 
           data={data} 
           tableActions={
             [
               {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList , classes:"w-20"},
-              {title:"analyze all",position: Position.LEFT ,isAction:isAnalyze , action : analyzeAll , classes:"w-32"},
+             // {title:"analyze all",position: Position.LEFT ,isAction:isAnalyze , action : analyzeAll , classes:"w-32"},
             ]
           }
-          rowActions={
+          /*rowActions={
             [
                 {
                     icon:"fa-solid fa-magnifying-glass-chart",
@@ -71,7 +78,7 @@ export default function PagesList() {
                     classes:"text-green-600 hover:scale-110"
                 }
             ]
-          }
+          }*/
         />
         </div>
     );

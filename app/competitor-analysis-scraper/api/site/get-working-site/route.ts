@@ -4,5 +4,5 @@ import {getWorkingSites} from "../../../controller";
 export async function GET (req:NextRequest){
     const result = await getWorkingSites();
     if(result.hasErrors()) return NextResponse.json({errors:result.getErrors(),stopcron:true},{status: 400});
-    return NextResponse.json({site:result.getResults()?.[0]},{status: 200});
+    return NextResponse.json({site:result.getResults()},{status: 200});
 } 

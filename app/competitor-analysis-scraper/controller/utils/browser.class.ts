@@ -6,7 +6,47 @@ export default class Browser {
     private errors :string[] = [];
     private results:any[]= [];
     private pages:string[] = [];
-    private max:number = 1;
+    private max:number = 3;
+  
+    options:string[] = [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process',
+      '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-breakpad',
+      '--disable-client-side-phishing-detection',
+      '--disable-component-update',
+      '--disable-default-apps',
+      '--disable-domain-reliability',
+      '--disable-features=AudioServiceOutOfProcess',
+      '--disable-hang-monitor',
+      '--disable-ipc-flooding-protection',
+      '--disable-notifications',
+      '--disable-offer-store-unmasked-wallet-cards',
+      '--disable-popup-blocking',
+      '--disable-print-preview',
+      '--disable-prompt-on-repost',
+      '--disable-renderer-backgrounding',
+      '--disable-sync',
+      '--disable-translate',
+      '--metrics-recording-only',
+      '--no-pings',
+      '--password-store=basic',
+      '--use-mock-keychain',
+      '--enable-automation',
+      '--disable-blink-features=AutomationControlled'
+    ];
+
+    ressources : string[] = ['image', 'stylesheet', 'font', 'media'];
+
+
 
     constructor(max:string|null=null){
       this.max = !isNaN(Number(max)) && Number(max)>0? Number(max):this.max;
@@ -45,13 +85,28 @@ export default class Browser {
 
     protected async getBrowser(){
       if(this.browser==null)
-        this.browser = await puppeteer.launch();
+        this.browser = await puppeteer.launch(
+          {
+            headless:true,//run the browser with out GUI
+            args:this.options
+          }
+        );
       return this.browser;
     }
   
-    protected async getPage() : Promise<any>{
+    protected async getPage(loadRessources:boolean = false) : Promise<any>{
       if(this.page ==null)
         this.page = (await this.getBrowser()).newPage();
+      if(loadRessources){
+        await this.page.setRequestInterception(true);
+        this.page.on('request', (req:any) => {
+            if (this.ressources.includes(req.resourceType())) {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
+      }
       return this.page;
     }
   

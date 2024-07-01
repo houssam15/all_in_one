@@ -55,6 +55,7 @@ export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
     if(pages.length==0) await updateSiteState(site.id,"COMPLETED");
     return pages;
   }catch(err){
+    console.error(err);
     return null;
   }
 }

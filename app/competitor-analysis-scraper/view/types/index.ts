@@ -4,3 +4,4 @@ export type {TableAction} from "./table_action.interface";
 export type {RowAction} from "./row_action.interface";
 //enums
 export {Position} from "./table_action.interface";
+export {AlertType} from "./alert_table_type.interface";
