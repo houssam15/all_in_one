@@ -30,7 +30,7 @@ export default function WebsiteList() {
     const socketIo = io("http://localhost:3001");
     setSocket(socketIo);
     socketIo.on('connect', () => {
-      setProgress(0);
+      //setProgress(0);
     });
     socketIo.on('disconnect', () => {
       setProgress(null);

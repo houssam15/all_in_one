@@ -48,7 +48,20 @@ export default function PagesList() {
      
     const hashData = (data: any) => {
         return crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
-       };
+    };
+
+    const loadPageAnalytics =async (data:any) => {
+        try{
+            const result = await fetch(`/competitor-analysis-scraper/api/pages/get-page-analytics?page_id=${data.id}`);
+            const content =  await result.json();
+            if(result.status!==200) return setAlertData({messages:content?.errors , type:AlertType.ERROR});
+            //setData( content.pages||[]);
+            console.log(content);
+        }catch(err){
+            setAlertData({messages:["Internal server error !"] , type:AlertType.ERROR});
+        }
+    }
+
     return (
        <div className={`min-h-80`}>
         <div className={`${alertData?"flex relative bg-gray-100":""} items-center w-full h-14`}>
@@ -65,20 +78,15 @@ export default function PagesList() {
              // {title:"analyze all",position: Position.LEFT ,isAction:isAnalyze , action : analyzeAll , classes:"w-32"},
             ]
           }
-          /*rowActions={
+          rowActions={
             [
                 {
                     icon:"fa-solid fa-magnifying-glass-chart",
-                    controller:()=>console.log("TEST") ,
+                    controller:loadPageAnalytics,
                     classes:"text-blue-600 hover:scale-110"
                 },
-                {
-                    icon:"fa-solid fa-chart-line",
-                    controller:()=>console.log("TEST") ,
-                    classes:"text-green-600 hover:scale-110"
-                }
             ]
-          }*/
+          }
         />
         </div>
     );

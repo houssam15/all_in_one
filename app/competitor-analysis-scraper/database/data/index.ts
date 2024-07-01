@@ -167,3 +167,24 @@ export async function getAllPages() : Promise<any|null>{
   }
 }
 
+
+export async function getPageAnalytics(page_id:string) : Promise<any|null>{
+  try{
+    const result = await prisma.competitorAnalysisScraperPageAnalytic.findMany(
+      {
+        where:{
+          pageId:page_id
+        },
+        orderBy:{
+          createdAt:"asc"
+        }
+      }
+    );
+    return result;
+  }catch(err){
+    console.error(err);
+    return null;
+  }
+}
+
+
