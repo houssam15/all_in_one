@@ -12,5 +12,5 @@ export async function getWebsitePages (url:string|null , max:string|null):Promis
     if((await browser.getSitePages())==null) return response.addError("Can't get site pages !");
     const new_pages = await saveSitePages(site , browser.getPages());
     if(new_pages==null) return response.addError("Failed to save pages !");
-    return response.addResult({message : `${browser.getPages().length} found${new_pages.length>0?" ,"+new_pages.length+' new page(s) saved succesfully !':''} .` , all_pages:[browser.getPages()],new_pages : new_pages});
+    return response.setResults({message : `${browser.getPages().length} found${new_pages.length>0?" ,"+new_pages.length+' new page(s) saved succesfully !':''} .` ,/* all_pages:[browser.getPages()],new_pages : new_pages*/});
 }

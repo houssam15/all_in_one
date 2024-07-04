@@ -111,8 +111,15 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                         
                                         {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center flex justify-center gap-2 border-t-2 border-black whitespace-nowrap`}>
                                           {rowActions.map((action , index)=>(
-                                                              <div key={index}>
+                                                              <div key={index} className={`${action?.helpText?"relative group":""}`}>
                                                                <i onClick={(e)=>action.controller(elm)} className={`${action.icon} cursor-pointer mx-auto ${action.classes}`}></i> 
+                                                               {action?.helpText?
+                                                                <span className={`absolute bottom-full left-full transform -translate-x-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2`}>
+                                                                {action.helpText}
+                                                                </span>
+                                                                :<></>
+                                                               }
+                                                              
                                                              </div>
                                           ))}
                                         </td> : <></>}

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import {Table , MyAlert} from ".";
+import {Table , MyAlert} from "../components";
 import {TableColumn , Position , AlertType } from "../types";
 import crypto from 'crypto';
 

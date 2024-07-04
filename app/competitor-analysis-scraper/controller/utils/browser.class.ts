@@ -16,7 +16,7 @@ export default class Browser {
       '--disable-gpu',
       '--no-first-run',
       '--no-zygote',
-      '--single-process',
+      // '--single-process',
       '--disable-background-networking',
       '--disable-background-timer-throttling',
       '--disable-backgrounding-occluded-windows',
@@ -35,13 +35,13 @@ export default class Browser {
       '--disable-prompt-on-repost',
       '--disable-renderer-backgrounding',
       '--disable-sync',
-      '--disable-translate',
-      '--metrics-recording-only',
-      '--no-pings',
-      '--password-store=basic',
-      '--use-mock-keychain',
-      '--enable-automation',
-      '--disable-blink-features=AutomationControlled'
+       '--disable-translate',
+       '--metrics-recording-only',
+       '--no-pings',
+       '--password-store=basic',
+       '--use-mock-keychain',
+       '--enable-automation',
+       '--disable-blink-features=AutomationControlled'
     ];
 
     ressources : string[] = ['image', 'stylesheet', 'font', 'media'];
@@ -87,7 +87,7 @@ export default class Browser {
       if(this.browser==null)
         this.browser = await puppeteer.launch(
           {
-            headless:true,//run the browser with out GUI
+            headless:true,//run the browser without GUI
             args:this.options
           }
         );

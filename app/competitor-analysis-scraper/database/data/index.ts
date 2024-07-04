@@ -1,7 +1,22 @@
-import { Prisma, PrismaClient } from '@prisma/client'
-
+import { Prisma, PrismaClient, Status } from '@prisma/client'
+import Response from "../../controller/utils/response.class";
 const prisma = new PrismaClient()
 
+export class Data extends Response{
+   
+   public async getWorkingSite(addErrorIfFound:boolean=false): Promise<any>{
+    try{ 
+      const site= await prisma.competitorAnalysisScraperSite.findFirstOrThrow({
+        where:{ state:"WORKING" }});
+      if(addErrorIfFound) this.addError(`site "${site.url}" is working !`);
+      return site;
+    }catch(err){
+      this.addError("Working site not found !");
+      console.error(err);
+      return null;
+    }
+   }
+}
 
 export async function createNewSite(url: string ){
   try{
@@ -50,7 +65,7 @@ export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
   try{
     const site = await getSiteByUrl(url);
     if(site==null) throw new Error("Site not exist");
-    if(site.state=="NEW") await updateSiteState(site.id,"WORKING");
+    if(site.state!="WORKING") throw new Error(`site state is : ${site.state} \n => change state to WORKING !`);;
     const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id , is_proccessed:false}});
     if(pages.length==0) await updateSiteState(site.id,"COMPLETED");
     return pages;
@@ -112,6 +127,16 @@ export async function updateSiteStateAndHisPages(siteId:string): Promise<any>{
   }
 }
 
+export async function setSiteState(siteId:string , status:Status): Promise<any>{
+  try{
+    const site = await prisma.competitorAnalysisScraperSite.findFirstOrThrow({where:{id:siteId}});
+    if(status=="NEW") await prisma.competitorAnalysisScraperPage.updateMany({where:{siteId:site.id} , data:{is_proccessed:false}});
+    return await prisma.competitorAnalysisScraperSite.update({where:{id:site.id} , data:{state:status}});
+  }catch(err){
+    return null;
+  }
+}
+
 
 export async function getSiteAnalyticsProgress(url:string): Promise<number|null>{
   try{
@@ -138,9 +163,16 @@ export async function getAllSites(): Promise<any|null>{
 
 export async function deleteWebsite(id:string): Promise<any|null>{
   try{
+    await prisma.competitorAnalysisScraperPageAnalytic.deleteMany({where:{
+      page:{
+        siteId:id
+      }
+    }});
+    await prisma.competitorAnalysisScraperPage.deleteMany({where:{siteId:id}})
     const result = await prisma.competitorAnalysisScraperSite.delete({where:{id}});
     return result;
   }catch(err){
+    console.error(err);
     return null;
   }
 }

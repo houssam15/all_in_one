@@ -1,7 +1,7 @@
 "use client"
 import React,{ useState, useEffect }  from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
-import {Table , ConfirmationModal , MyAlert} from ".";
+import {Table , ConfirmationModal , MyAlert} from "../components";
 import {TableColumn , Position , AlertType} from "../types";
 import { io, Socket } from 'socket.io-client';
 import crypto from 'crypto';
@@ -91,14 +91,20 @@ export default function WebsiteList() {
   }
 
   const analyzeSite = async(data:any)=>{
-    const result = await fetch(`/competitor-analysis-scraper/api/pages/get-analytics?url=${data.url}&max=1`);
-      if(result.status!==200) return setAlertData((await result.json())?.errors||["internal server error"]);
+    const result = await fetch(`/competitor-analysis-scraper/api/site/set-site-state?site_id=${data.id}&status=WORKING`);
+    if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] ,type:AlertType.ERROR});
       await refreshList();
       setAlertData({messages:["automate analyze by click \"auto analyzing\" !"] , type:AlertType.INFO});
    }
 
+  const getPages = async(data:any)=>{
+    const result = await fetch(`/competitor-analysis-scraper/api/pages/get-website-pages?url=${data.url}`);
+    if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] ,type:AlertType.ERROR});
+    setAlertData({messages: [(await result.json())?.data.message], type:AlertType.INFO});
+  }
+
    const inializeState = async(data:any)=>{
-    const result = await fetch(`/competitor-analysis-scraper/api/site/inialize-site-state?site_id=${data.id}`);
+    const result = await fetch(`/competitor-analysis-scraper/api/site/set-site-state?site_id=${data.id}&status=NEW`);
       if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] , type:AlertType.ERROR});
       await refreshList();
       setAlertData({messages:["State Inialized succesfully !"] , type:AlertType.INFO});
@@ -142,24 +148,28 @@ export default function WebsiteList() {
               { 
                 icon:"fa-regular fa-trash-can" ,
                 controller : (site:any)=>setDeleteDialog({state:true , data:site}) ,
-                classes:"text-red-600 hover:scale-110"
+                classes:"text-red-600 hover:scale-110",
+                helpText:"delete website"
               },
               //{ icon:"",controller : analyzeSite , classes:"text-blue-600 hover:scale-110"},
               {
                 icon:"fa-solid fa-magnifying-glass-chart",
                 controller:analyzeSite ,
-                classes:"text-blue-600 hover:scale-110"
+                classes:"text-blue-600 hover:scale-110",
+                helpText:"change state to \"WORKING\""
               },
               {
                 icon:"fa-solid fa-arrows-rotate",
                 controller:inializeState ,
-                classes:"text-green-600 hover:scale-110"
+                classes:"text-green-600 hover:scale-110",
+                helpText:"change state to \"NEW\""
               },
-              // {
-              //   icon:"fa-solid fa-chart-line",
-              //   controller:()=>console.log("TEST") ,
-              //   classes:"text-green-600 hover:scale-110"
-              // }
+               {
+                 icon:"fa-solid fa-chart-line",
+                 controller:getPages ,
+                 classes:"text-yellow-600 hover:scale-110",
+                 helpText:"get pages"
+               }
             ]}
           />
       </div>
