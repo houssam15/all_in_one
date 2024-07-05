@@ -13,7 +13,7 @@ export default function WebsiteList() {
     {key:"speed", title:"Speed" , classes:"" , defaultValue:"-----"},
     {key:"totalPages", title:"Total pages" , classes:"" , defaultValue:"-----"},
     {key:"url", title:"Url" , classes:"" , defaultValue:"-----"},
-    {key:"state", title:"State" , classes:"" , defaultValue:"-----"}
+    {key:"state", title:"State" , classes:"" , defaultValue:"-----" , builder:(data:any)=><div>{data=="WORKING"?<div>{data} <span>({progress??0} %)</span></div> :data}</div>}
   ]);
   
   const [data , setData] = useState<any[]>([]);
@@ -22,6 +22,7 @@ export default function WebsiteList() {
   const [deleteDialog, setDeleteDialog] = useState<{state :boolean , data:any}>({state:false , data :null});
   const [errorAlertDuration] = useState<number>(3000);
   const [isAutomate , setIsAutomate]  =useState(false);
+  const [isCancel,setIsCancel] =useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<any>(null);
 
@@ -30,7 +31,7 @@ export default function WebsiteList() {
     const socketIo = io("http://localhost:3001");
     setSocket(socketIo);
     socketIo.on('connect', () => {
-      //setProgress(0);
+      setProgress(0);
     });
     socketIo.on('disconnect', () => {
       setProgress(null);
@@ -50,9 +51,7 @@ export default function WebsiteList() {
         headers: {
           'Cache-Control': 'no-cache',
         },
-      }
-        
-      );
+      });
       const content = await results.json();
       console.log(content)
       if(results.status!==200) return setAlertData({messages:content?.errors||["internal server error"] , type:AlertType.ERROR});
@@ -76,6 +75,17 @@ export default function WebsiteList() {
       setAlertData({messages:["Started succesfully !"] , type:AlertType.INFO});
     }finally{
       setIsAutomate(false)
+    }
+  }
+
+  const cancelAnalyze =async () => {
+    setIsCancel(true);
+    try{
+      const result = await fetch("/competitor-analysis-scraper/api/cron/stop");
+      if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] , type:AlertType.WARNING});
+      setAlertData({messages:["Started succesfully !"] , type:AlertType.INFO});
+    }finally{
+      setIsCancel(false)
     }
   }
 
@@ -142,7 +152,8 @@ export default function WebsiteList() {
             data={data}
             tableActions={[
                 {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList ,classes:"w-20"},
-                {title:progress==null?"auto analytics":(`${progress} %`),position: Position.LEFT ,isAction:isAutomate , action : automateAnalytics ,classes:`w-36 ${progress!=null?"text-green-500 text-bold":""}`},
+                {title:"Analyze site",position: Position.LEFT ,isAction:isAutomate , action : automateAnalytics ,classes:`w-32 ${progress!=null?"text-green-500 text-bold":""}`},
+                {title:"Cancel",position: Position.LEFT ,isAction:isCancel , action : cancelAnalyze ,classes:`w-24`},
             ]}
             rowActions={[
               { 

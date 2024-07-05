@@ -5,5 +5,5 @@ import axios from 'axios';
 export async function GET (req:NextRequest){
     const result = await axios.get(process.env.COMPETITOR_ANALYSIS_SCRAPPER_CRON_HOST + "/api/competitor-analysis-scraper/start-cron");
     if(result.data.status=="KO") return NextResponse.json({errors:["Already running !"] },{status: 400});
-    return NextResponse.json({errors:["Running ..."]  },{status: 200});
+    return NextResponse.json({data:["Running ..."]},{status: 200});
 }

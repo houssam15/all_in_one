@@ -62,13 +62,17 @@ app.get('/api/competitor-analysis-scraper/start-cron', (req, res) => {
 });
 
 app.get('/api/competitor-analysis-scraper/stop-cron', (req, res) => {
+  try{
   if (job) {
     job.stop();
     job = null;
-    res.status(200).json({ message: 'Cron job stopped' });
+    res.status(200).json({ status:"OK" });
   } else {
-    res.status(400).json({ message: 'No cron job is running' });
+    res.status(200).json({ status: 'KO' });
   }
+}catch(err){
+  res.status(200).json({status:"KO"});
+}
 });
 
 

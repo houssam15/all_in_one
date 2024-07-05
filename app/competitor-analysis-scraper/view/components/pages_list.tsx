@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import {Table , MyAlert} from "../components";
+import {Table , MyAlert, AnalyticModal , AnalyticChart} from "../components";
 import {TableColumn , Position , AlertType } from "../types";
 import crypto from 'crypto';
 
@@ -17,6 +17,7 @@ export default function PagesList() {
     const [isRefresh , setIsRefresh]  =useState(false);
    // const [isAnalyze , setIsAnalyze]  =useState(false);
     const [errorAlertDuration] = useState<number>(3000);
+    const [analyticDialog, setAnalyticDialog] = useState<{state :boolean , data:any}>({state:false , data :null});
 
     useEffect(()=>{
         fetchPages();
@@ -57,9 +58,15 @@ export default function PagesList() {
             if(result.status!==200) return setAlertData({messages:content?.errors , type:AlertType.ERROR});
             //setData( content.pages||[]);
             console.log(content);
+            setAnalyticDialog({state:true ,data:content});
+
         }catch(err){
             setAlertData({messages:["Internal server error !"] , type:AlertType.ERROR});
         }
+    }
+
+    const getSpeeds = (data:any) => {
+        return data.data?.map((elm:any) => elm["speed"]);
     }
 
     return (
@@ -67,15 +74,38 @@ export default function PagesList() {
         <div className={`${alertData?"flex relative bg-gray-100":""} items-center w-full h-14`}>
                 {alertData && <MyAlert alertData={alertData} hideDuration={errorAlertDuration} hideAction={()=>setAlertData(null)}/>}
         </div>
+        {analyticDialog.state &&
+           <AnalyticModal 
+              cancel={()=>setAnalyticDialog({state:false , data:null})}
+              content={(
+              <div className="m-3 h-full box-border">
+                
+                <div className="pt-4 text-lg font-bold text-gray-600"> Analytics </div>
+                <div className="w-full h-[90%] grid grid-rows-2">
+                    <div className="grid grid-cols-2">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-lg font-bold text-gray-400 mb-2">Speed</div>
+                              <AnalyticChart data={getSpeeds(analyticDialog.data)}/> 
+                        </div>
+                        <div className="bg-blue-500"></div>
+                    </div>
+                    <div className="grid grid-cols-2">
+                        <div className="bg-green-300"></div>
+                        <div className="bg-green-500"></div>
+                    </div>
+                </div>
+
+              </div>
+              )}/>
+        }
        <Table 
           key={hashData(data)}
           title={"Pages"}
           columns={columns} 
           data={data} 
-          tableActions={
+          tableActions = {
             [
-              {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList , classes:"w-20"},
-             // {title:"analyze all",position: Position.LEFT ,isAction:isAnalyze , action : analyzeAll , classes:"w-32"},
+              {title:"refresh", position: Position.RIGHT , isAction:isRefresh , action : refreshList , classes:"w-20"},
             ]
           }
           rowActions={
@@ -83,7 +113,8 @@ export default function PagesList() {
                 {
                     icon:"fa-solid fa-magnifying-glass-chart",
                     controller:loadPageAnalytics,
-                    classes:"text-blue-600 hover:scale-110"
+                    classes:"text-blue-600 hover:scale-110",
+                    helpText:"show analytics"
                 },
             ]
           }

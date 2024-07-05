@@ -54,7 +54,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
             <div className="w-full max-w-4xl px-2">
                     <div className="flex items-center justify-between">
                         <div className="min-w-20 flex flex-row gap-1">
-                          {tableActions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map((elm,index) => (
+                          {tableActions?.filter(elm => elm.position==Position.LEFT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
@@ -64,7 +64,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                 {title}
                             </h1>
                         <div className="min-w-20 flex flex-row gap-1">
-                        {tableActions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
+                        {tableActions?.filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
