@@ -1,11 +1,9 @@
 "use server"
-import {SaveImagesForSite , getAllPagesFromSite} from "./../database/data";
+import { SavePagesForSite }  from "../database/data";
 
 const puppeteer = require('puppeteer');
 
-export async function getImages(site) {
-    const pages = await getAllPagesFromSite(site);
-
+export async function getPages(site) {
     let browser;
     try {
         browser = await puppeteer.launch({
@@ -56,29 +54,19 @@ export async function getImages(site) {
                 req.continue();
             }
         });
-        let allImages = [];
-        for (const pageUrl of pages) {
-            await page.goto(pageUrl);
+        await page.goto(site);
 
-            const images = await page.evaluate(() => {
-                const imageElements = Array.from(document.querySelectorAll('img'));
-                return imageElements.map(img => ({
-             
-                    src: img.src,
-                    alt: img.alt
-                }));
-            });
-            console.log(images);
+        const links = await page.evaluate(() => {
+            return [...new Set(Array.from(document.querySelectorAll('a'))
+                .map(link => link.href)
+                .filter(href => href.startsWith('http')))];
+        });
 
-            allImages = [...allImages, ...images];
-        }
+        // console.log('Extracted links:', links); // Debugging statement
 
-        // Remove duplicate images based on src and page
- 
-        // Return images as JSON
-        const res = await SaveImagesForSite(site, allImages);
+        const res = await SavePagesForSite(site, links);
         if (res) {
-            return { allImages };
+            return { links };
         } else {
             return false;
         }

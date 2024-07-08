@@ -69,7 +69,31 @@ model websiteScrapperPage {
   data Json
 }
 
+model websiteScrapperProcessedPage {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
+model websiteScrapperProcessedImage {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
+model websiteScrapperProcessedRessource {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
 model websiteScrapperImage {
+  id   String @id @default(cuid()) @map("_id")
+  site String
+  data Json
+}
+
+model websiteScrapperRessource {
   id   String @id @default(cuid()) @map("_id")
   site String
   data Json

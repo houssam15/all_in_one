@@ -1,31 +1,36 @@
 'use client' 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NavBar from '../../components/NavBar'
 import { CreateWebsite } from './../../../controller/CreateSite';
+import axios from 'axios';
+ 
+
 
 
 const page = () => {
 
-    const [site,setSite] = useState("")
-    const [description,setDescription] = useState("")
-    const handleSubmit = (e)=> {
+    const [site, setSite] = useState("");
+    const [description, setDescription] = useState("");
 
-        e.preventDefault();
-        CreateWebsite(site, description)
-        .then((res) => {
-          if (res) {
-            alert("Website created successfully!");
-          } else {
-            alert("An error occurred while creating the website. Please try again later.");
-          }
-        })
-        .catch((err) => {
-          console.error("Error creating website:", err);
+    
+ 
+    const handleSubmit = async (e) => {
+      
+      e.preventDefault(); 
+      window.location.href = '/website-scrapper/view/pages/retrieveData';
+      try {
+        const res = await axios(`http://localhost:3000/website-scrapper/api/create_site?site=${site}&description=${description}`);
+        if (res) {
+          alert("Website created successfully!");
+          
+        } else {
           alert("An error occurred while creating the website. Please try again later.");
-        });
-         
-    }
-
+        }
+      } catch (err) {
+        console.error("Error creating website:", err);
+        alert("An error occurred while creating the website. Please try again later.");
+      }
+    };
 
   return (
  <>

@@ -1,9 +1,10 @@
 "use server"
-import {SavePagesForSite} from "./../database/data";
-
+import { SaveRessourcesForSite, getAllPagesFromSite } from "../database/data";
 const puppeteer = require('puppeteer');
 
-export async function getPages(site) {
+export async function getRessources(site) {
+    const pages = await getAllPagesFromSite(site);
+
     let browser;
     try {
         browser = await puppeteer.launch({
@@ -54,40 +55,34 @@ export async function getPages(site) {
                 req.continue();
             }
         });
-        await page.goto(site);
+        let allScripts = [];
+        for (const pageUrl of pages) {
+            await page.goto(pageUrl);
 
-        const links = await page.evaluate(() => {
-            const uniqueLinks = new Set();
-            return Array.from(document.querySelectorAll('a'))
-                .map(anchor => ({
-                    href: anchor.href,
-                    text: anchor.textContent.trim()
-                }))
-                .filter(link => link.href.startsWith('http'))
-                .filter(link => {
-                    if (uniqueLinks.has(link.href)) {
-                        return false;
-                    } else {
-                        uniqueLinks.add(link.href);
-                        return true;
-                    }
-                })
-                .map(link => ({
-                    ...link,
-                    broken: !link.href
-                }));
-        });
-
- 
-        // Return links as JSON
-        // return { links };
-        const res = await SavePagesForSite(site,links)
-             if(res){
-                return { links };
-             }else{
-                    return false
-             }
+            const resources = await page.evaluate(() => {
+                const scriptElements = Array.from(document.querySelectorAll('script'));
+                const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
                 
+                const scripts = scriptElements.map(script => script.src).filter(src => src && src.includes('.js'));
+                const stylesheets = linkElements.map(link => link.href).filter(href => href && href.includes('.css'));
+                
+                return [...scripts, ...stylesheets];
+            });
+            console.log(resources);
+
+            allScripts = [...allScripts, ...resources];
+        }
+
+        // Remove duplicate scripts based on src
+        allScripts = [...new Set(allScripts)];
+
+        // Return scripts as JSON
+        const res = await SaveRessourcesForSite(site, allScripts);
+        if (res) {
+            return { allScripts };
+        } else {
+            return false;
+        }
 
     } catch (err) {
         console.error('Error processing website:', err);

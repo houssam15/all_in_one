@@ -1,5 +1,5 @@
 "use server"
-import { GetSiteBase } from "./../database/data";
+import { GetSiteBase } from "../database/data";
 
 export async function getSite(site) {
     try {
