@@ -1,5 +1,5 @@
 "use server"
-import {SavePagesForSite} from "./../database/data";
+import { SavePagesForSite }  from "./../database/data";
 
 const puppeteer = require('puppeteer');
 
@@ -57,37 +57,19 @@ export async function getPages(site) {
         await page.goto(site);
 
         const links = await page.evaluate(() => {
-            const uniqueLinks = new Set();
-            return Array.from(document.querySelectorAll('a'))
-                .map(anchor => ({
-                    href: anchor.href,
-                    text: anchor.textContent.trim()
-                }))
-                .filter(link => link.href.startsWith('http'))
-                .filter(link => {
-                    if (uniqueLinks.has(link.href)) {
-                        return false;
-                    } else {
-                        uniqueLinks.add(link.href);
-                        return true;
-                    }
-                })
-                .map(link => ({
-                    ...link,
-                    broken: !link.href
-                }));
+            return [...new Set(Array.from(document.querySelectorAll('a'))
+                .map(link => link.href)
+                .filter(href => href.startsWith('http')))];
         });
 
- 
-        // Return links as JSON
-        // return { links };
-        const res = await SavePagesForSite(site,links)
-             if(res){
-                return { links };
-             }else{
-                    return false
-             }
-                
+        // console.log('Extracted links:', links); // Debugging statement
+
+        const res = await SavePagesForSite(site, links);
+        if (res) {
+            return { links };
+        } else {
+            return false;
+        }
 
     } catch (err) {
         console.error('Error processing website:', err);

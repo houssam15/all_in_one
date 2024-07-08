@@ -1,8 +1,33 @@
+"use client"; 
 import Link from 'next/link';
 import  NavBar  from './../components/NavBar';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 
 const page = () => {
+
+  
+  
+  const [sites, setSites] = useState();
+
+  console.log("dddds");
+
+  const fetchData = async () => {
+     
+    try {
+      const response = await axios.get('http://localhost:3000/website-scrapper/api/get_all');
+        console.log(response.data.data);
+        
+      setSites(response.data.data);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return  (
     <div className='bg-gray-800 ' style={{width:"97%"}}>
         
@@ -93,29 +118,34 @@ const page = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-              <tr>
+          
+        {sites && sites.map((s, index) => (
+   
+ 
+ 
+             <tr>
                 <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                   <div>
                     <h2 className="font-medium text-gray-800 dark:text-white ">
-                      Catalog
+                    {s.site}
                     </h2>
                     <p className="text-sm font-normal text-gray-600 dark:text-gray-400">
-                      catalogapp.io
+                    {s.site}
                     </p>
                   </div>
                 </td>
                 <td className="px-12 py-4 text-sm font-medium whitespace-nowrap">
                   <div className="inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800">
-                    Finished
+                  {s.status}
                   </div>
                 </td>
                 <td className="px-4 py-4 text-sm whitespace-nowrap">
                   <div>
                     <h4 className="text-gray-700 dark:text-gray-200">
-                      Content curating app
+                     {s.description} 
                     </h4>
                     <p className="text-gray-500 dark:text-gray-400">
-                      Brings all your news into one place
+               {s.description} 
                     </p>
                   </div>
                 </td>
@@ -143,8 +173,9 @@ const page = () => {
                     </svg>
                   </button>
                 </td>
-              </tr>
-       
+           
+          </tr>
+       ))}
            
           
          

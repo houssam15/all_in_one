@@ -10,9 +10,9 @@ export async function GET (req){
     const res = await getImages(site);
   
     if(res) 
-      return NextResponse.json({...response ,status:true, data:res},{status: 200});
+      return NextResponse.json({...response ,status:true,progress:"DONE", data:res},{status: 200});
     if(!res) 
-      return NextResponse.json({...response ,status:false, res :{ message : "failed !"}},{status: 400});
+      return NextResponse.json({...response ,status:false,progress:"Error", res :{ message : "failed !"}},{status: 400});
    
  
   } 

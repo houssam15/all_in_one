@@ -1,9 +1,8 @@
 "use server"
-import {SaveImagesForSite , getAllPagesFromSite} from "./../database/data";
-
+import { SaveRessourcesForSite, getAllPagesFromSite } from "./../database/data";
 const puppeteer = require('puppeteer');
 
-export async function getImages(site) {
+export async function getRessources(site) {
     const pages = await getAllPagesFromSite(site);
 
     let browser;
@@ -56,29 +55,31 @@ export async function getImages(site) {
                 req.continue();
             }
         });
-        let allImages = [];
+        let allScripts = [];
         for (const pageUrl of pages) {
             await page.goto(pageUrl);
 
-            const images = await page.evaluate(() => {
-                const imageElements = Array.from(document.querySelectorAll('img'));
-                return imageElements.map(img => ({
-             
-                    src: img.src,
-                    alt: img.alt
-                }));
+            const resources = await page.evaluate(() => {
+                const scriptElements = Array.from(document.querySelectorAll('script'));
+                const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+                
+                const scripts = scriptElements.map(script => script.src).filter(src => src && src.includes('.js'));
+                const stylesheets = linkElements.map(link => link.href).filter(href => href && href.includes('.css'));
+                
+                return [...scripts, ...stylesheets];
             });
-            console.log(images);
+            console.log(resources);
 
-            allImages = [...allImages, ...images];
+            allScripts = [...allScripts, ...resources];
         }
 
-        // Remove duplicate images based on src and page
- 
-        // Return images as JSON
-        const res = await SaveImagesForSite(site, allImages);
+        // Remove duplicate scripts based on src
+        allScripts = [...new Set(allScripts)];
+
+        // Return scripts as JSON
+        const res = await SaveRessourcesForSite(site, allScripts);
         if (res) {
-            return { allImages };
+            return { allScripts };
         } else {
             return false;
         }
