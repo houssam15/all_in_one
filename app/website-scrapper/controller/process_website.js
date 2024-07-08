@@ -1,7 +1,7 @@
 "use server"
 const puppeteer = require('puppeteer');
-const { getPages } = require('./getPages');
-const { getImages } = require('./getImages');
+const { getPages } = require('./get_pages');
+const { getImages } = require('./get_images');
 
 export async function processWebsite(site) {
   

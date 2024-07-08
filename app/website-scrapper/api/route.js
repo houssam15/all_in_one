@@ -1,5 +1,5 @@
  import { NextRequest, NextResponse } from 'next/server';
- import  ScrapWebsite  from "../ScrapWebsite";
+ import  ScrapWebsite  from "../scrap_website";
 
 
 export async function POST (req){
