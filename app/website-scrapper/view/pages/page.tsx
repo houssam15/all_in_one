@@ -8,7 +8,7 @@ const page = () => {
 
   
   
-  const [sites, setSites] = useState();
+  const [sites, setSites] = useState<any[]>();
 
   console.log("dddds");
 
