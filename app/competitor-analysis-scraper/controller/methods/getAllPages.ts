@@ -1,6 +1,6 @@
 "use server"
 import Response from "../utils/response.class";
-import { getAllPages as getAllPagesData} from "../../database/data";
+import { getAllPages as getAllPagesData } from "../../database/data";
 
 export async function getAllPages ():Promise<Response>{
     var response = new Response();

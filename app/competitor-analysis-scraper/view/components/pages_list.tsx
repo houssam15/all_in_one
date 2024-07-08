@@ -9,7 +9,7 @@ export default function PagesList() {
         {key:"site", title:"Site" , classes:"" , defaultValue:"-----"},
         {key:"url", title:"Page" , classes:"" , defaultValue:"-----"},
         {key:"is_proccessed", title:"Is proccessed" , classes:"" , defaultValue:"-----",
-         builder:(data:any)=>(data==true?<i className="fa-solid fa-check text-red-600"></i>:<i className="fa-solid fa-xmark text-blue-500"></i>) 
+         builder:(data:any)=>(data!=true?<i className="fa-solid fa-xmark  text-red-600"></i>:<i className="fa-solid fa-check text-blue-500"></i>) 
         },
     ]);
     const [data , setData] = useState<any[]>([]);
@@ -65,8 +65,61 @@ export default function PagesList() {
         }
     }
 
-    const getSpeeds = (data:any) => {
-        return data.data?.map((elm:any) => elm["speed"]);
+    const getyData = (data:any) => {
+        return [
+            {
+              data: data.data?.map((elm:any) => elm["speed"])
+            }
+          ] ;
+    }
+    const getxData = (data: { data: { createdAt: string }[] }) => {
+        return data.data?.map((elm: { createdAt: string }) => {
+            const date = new Date(elm["createdAt"]);
+            return date.toLocaleString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).replace(',', '');
+        });
+    }
+
+    const getyData2 = (data:any) => {
+        var result:any={
+            name: "Availability",
+            colorByPoint:true,
+            data : []
+        };
+        try{
+            const counts = data.data?.reduce((acc:Record<string, number>, value:any) => {
+                value=value["availability"];
+                acc[value] = (acc[value] || 0) +1;
+                return acc;
+            },[]);
+            result.data = Object.keys(counts).map(key => ({
+                name: key,
+                y: counts[key],
+                drilldown: key
+            }));
+
+        }catch(err){
+            console.log(err)
+            result.data=[];
+        } 
+        return [result];
+    }
+
+    const getxData2= async (data:any) => {
+        const counts = data.data?.reduce((acc:Record<string, number>, value:any) => {
+            value=value["availability"];
+            acc[value] = (acc[value] || 0) +1;
+            return acc;
+        },[]);
+        const result = Object.keys(counts).map(key => (key));
+        console.log(result)
+        return  result;
     }
 
     return (
@@ -85,14 +138,17 @@ export default function PagesList() {
                     <div className="grid grid-cols-2">
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-lg font-bold text-gray-400 mb-2">Speed</div>
-                              <AnalyticChart data={getSpeeds(analyticDialog.data)}/> 
+                              <AnalyticChart type={"spline"} yData={getyData(analyticDialog.data)} xData={getxData(analyticDialog.data)}/> 
                         </div>
-                        <div className="bg-blue-500"></div>
+                        <div className="flex flex-col items-center justify-center">
+                        <div className="text-lg font-bold text-gray-400 mb-2">Availability</div>
+                              <AnalyticChart xData={getxData2(analyticDialog.data)} type={"column"}  yData={getyData2(analyticDialog.data)}/> 
+                        </div>
                     </div>
-                    <div className="grid grid-cols-2">
+                    {/* <div className="grid grid-cols-2">
                         <div className="bg-green-300"></div>
                         <div className="bg-green-500"></div>
-                    </div>
+                    </div> */}
                 </div>
 
               </div>
@@ -111,9 +167,9 @@ export default function PagesList() {
           rowActions={
             [
                 {
-                    icon:"fa-solid fa-magnifying-glass-chart",
+                    icon:"fa-solid fa-chart-line",
                     controller:loadPageAnalytics,
-                    classes:"text-blue-600 hover:scale-110",
+                    classes:"text-gray-600 hover:scale-110",
                     helpText:"show analytics"
                 },
             ]

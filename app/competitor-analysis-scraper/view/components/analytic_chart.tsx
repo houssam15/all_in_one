@@ -4,10 +4,10 @@ import HighchartsReact from 'highcharts-react-official';
 
 
 
-export default function AnalyticChart ({data}:{data:number[]}) {
+export default function AnalyticChart ({type , yData , xData}:{type:string , yData:any , xData:any}) {
     const options = {
         chart: {
-          type: 'spline',
+          type: type,
           width:450,
           height:170,
         },
@@ -15,14 +15,13 @@ export default function AnalyticChart ({data}:{data:number[]}) {
         yAxis: {
             tickInterval: 1,
         },
+        xAxis:{
+          categories:xData
+        },
         legend:{
             enabled:false
         },
-        series: [
-          {
-            data: data
-          }
-        ]
+        series: yData
     };
     return(
     <HighchartsReact highcharts={Highcharts} options={options}/>

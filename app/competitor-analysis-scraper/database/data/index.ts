@@ -61,14 +61,14 @@ export async function saveSitePages(site:any , pages : string[]):Promise<string[
   }
 }
 
-export async function getNotProccessedSitePages(url:string):Promise<any[]|null>{
+export async function getNotProccessedSitePages(url:string):Promise<any|null>{
   try{
     const site = await getSiteByUrl(url);
     if(site==null) throw new Error("Site not exist");
     if(site.state!="WORKING") throw new Error(`site state is : ${site.state} \n => change state to WORKING !`);;
     const pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId : site.id , is_proccessed:false}});
     if(pages.length==0) await updateSiteState(site.id,"COMPLETED");
-    return pages;
+    return {site,pages: pages};
   }catch(err){
     console.error(err);
     return null;
@@ -138,13 +138,13 @@ export async function setSiteState(siteId:string , status:Status): Promise<any>{
 }
 
 
-export async function getSiteAnalyticsProgress(url:string): Promise<number|null>{
+export async function getSiteAnalyticsProgress(url:string): Promise<any|null>{
   try{
     const site = await getSiteByUrl(url);
     if(site==null) throw new Error("Site not found !");
       const total_pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId:site.id}});
       const proccessed_pages = await prisma.competitorAnalysisScraperPage.findMany({where:{siteId:site.id , is_proccessed:true}});
-      return (proccessed_pages.length/total_pages.length)*100;
+      return {id:site.id,progress: (proccessed_pages.length/total_pages.length)*100};
   }catch(err){
     return null;
   }
@@ -218,5 +218,27 @@ export async function getPageAnalytics(page_id:string) : Promise<any|null>{
     return null;
   }
 }
+
+export async function setSiteNumberOfPages(site_id:string , totalPages:number) : Promise<any|null>{
+  try{
+    console.log(`---------${site_id}-----------${totalPages}------`);
+    const result = await prisma.competitorAnalysisScraperSite.update(
+      {
+        where:{
+          id:site_id
+        },
+        data:{
+          totalPages:totalPages
+        }
+      }
+    );
+    return result;
+  }catch(err){
+    console.error(err);
+    return null;
+  }
+}
+
+
 
 

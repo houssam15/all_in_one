@@ -5,15 +5,30 @@ import {Table , ConfirmationModal , MyAlert} from "../components";
 import {TableColumn , Position , AlertType} from "../types";
 import { io, Socket } from 'socket.io-client';
 import crypto from 'crypto';
+import { Spinner } from "flowbite-react";
 
 export default function WebsiteList() {
-  const [progress , setProgress] = useState<number|null>(null);
   const [columns , setColumns] = useState<TableColumn[]>([
     {key:"createdAt", title:"Date" , classes:"" , defaultValue:"-----"},
     {key:"speed", title:"Speed" , classes:"" , defaultValue:"-----"},
     {key:"totalPages", title:"Total pages" , classes:"" , defaultValue:"-----"},
     {key:"url", title:"Url" , classes:"" , defaultValue:"-----"},
-    {key:"state", title:"State" , classes:"" , defaultValue:"-----" , builder:(data:any)=><div>{data=="WORKING"?<div>{data} <span>({progress??0} %)</span></div> :data}</div>}
+    {key:"state", title:"State" , classes:"" , defaultValue:"-----" ,builder:(data:any)=>
+      
+       <div className="flex">
+        
+        {typeof data=="object" || data=="WORKING"?
+          <div>                    
+              <p className="text-xs">
+                <Spinner className="mr-2"/> 
+                <span>({data.progress??0}%)</span>
+              </p> 
+              <p className="text-sm text-blue-400 mx-auto">(WORKING)</p>
+          </div>
+          :data
+        }
+       </div>
+     }
   ]);
   
   const [data , setData] = useState<any[]>([]);
@@ -27,19 +42,36 @@ export default function WebsiteList() {
   const [message, setMessage] = useState<any>(null);
 
   useEffect(()=>{
+
     fetchWebsites();
     const socketIo = io("http://localhost:3001");
     setSocket(socketIo);
+
     socketIo.on('connect', () => {
-      setProgress(0);
+      console.log("connect ");
     });
+
     socketIo.on('disconnect', () => {
-      setProgress(null);
+      console.log("disconnected ");
     });
+
+    socketIo.on('analytics-started', (data: any) => {
+      console.log("analytics-started ");
+    });
+    
+    socketIo.on('analytics-stopped', (data: any) => {
+      console.log("analytics-updated " ,null);
+    }); 
+
+    socketIo.on('analytics-completed',async () => {
+      console.log("----------completed-------------")
+      await refreshList();
+    }); 
+
     socketIo.on('analytics-updated', (data: any) => {
-      console.log(data);
-      setProgress(data.progress);
+      setData((prev)=>prev.map((row)=>row.id==data?.id?{...row , state:{progress:data.progress}}:row));
     });
+
     return () => {
       socketIo.disconnect(); // Disconnect socket on component unmount
     };
@@ -53,7 +85,6 @@ export default function WebsiteList() {
         },
       });
       const content = await results.json();
-      console.log(content)
       if(results.status!==200) return setAlertData({messages:content?.errors||["internal server error"] , type:AlertType.ERROR});
       setData(content?.sites??[]);
       setAlertData({messages:["data loaded succesfully"] , type:AlertType.INFO});
@@ -72,7 +103,7 @@ export default function WebsiteList() {
     try{
       const result = await fetch("/competitor-analysis-scraper/api/cron/start");
       if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] , type:AlertType.WARNING});
-      setAlertData({messages:["Started succesfully !"] , type:AlertType.INFO});
+      setAlertData({messages:(await result.json())?.data , type:AlertType.INFO});
     }finally{
       setIsAutomate(false)
     }
@@ -83,7 +114,7 @@ export default function WebsiteList() {
     try{
       const result = await fetch("/competitor-analysis-scraper/api/cron/stop");
       if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] , type:AlertType.WARNING});
-      setAlertData({messages:["Started succesfully !"] , type:AlertType.INFO});
+      setAlertData({messages:(await result.json())?.data , type:AlertType.WARNING});
     }finally{
       setIsCancel(false)
     }
@@ -118,7 +149,6 @@ export default function WebsiteList() {
       if(result.status!==200) return setAlertData({messages:(await result.json())?.errors||["internal server error"] , type:AlertType.ERROR});
       await refreshList();
       setAlertData({messages:["State Inialized succesfully !"] , type:AlertType.INFO});
-      setProgress(null);
    }
 
    const hashData = (data: any) => {
@@ -152,7 +182,7 @@ export default function WebsiteList() {
             data={data}
             tableActions={[
                 {title:"refresh",position: Position.RIGHT ,isAction:isRefresh , action : refreshList ,classes:"w-20"},
-                {title:"Analyze site",position: Position.LEFT ,isAction:isAutomate , action : automateAnalytics ,classes:`w-32 ${progress!=null?"text-green-500 text-bold":""}`},
+                {title:"Analyze site",position: Position.LEFT ,isAction:isAutomate , action : automateAnalytics ,classes:`w-32`},
                 {title:"Cancel",position: Position.LEFT ,isAction:isCancel , action : cancelAnalyze ,classes:`w-24`},
             ]}
             rowActions={[
@@ -164,7 +194,7 @@ export default function WebsiteList() {
               },
               //{ icon:"",controller : analyzeSite , classes:"text-blue-600 hover:scale-110"},
               {
-                icon:"fa-solid fa-magnifying-glass-chart",
+                icon:"fa-solid fa-hammer",
                 controller:analyzeSite ,
                 classes:"text-blue-600 hover:scale-110",
                 helpText:"change state to \"WORKING\""
@@ -176,7 +206,7 @@ export default function WebsiteList() {
                 helpText:"change state to \"NEW\""
               },
                {
-                 icon:"fa-solid fa-chart-line",
+                 icon:"fa-solid fa-layer-group",
                  controller:getPages ,
                  classes:"text-yellow-600 hover:scale-110",
                  helpText:"get pages"

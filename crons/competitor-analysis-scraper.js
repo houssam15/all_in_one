@@ -25,7 +25,6 @@ const runCronJob = async () => {
   try {
     //console.log("cron executed");
     const site = await axios.get(host+'/competitor-analysis-scraper/api/site/get-working-site');
-    console.log(site.data)
     const response = await axios.get(host+'/competitor-analysis-scraper/api/pages/get-analytics?url='+site.data.site.url);
      // Notify all connected clients
     sockets.forEach((socket) => {
@@ -33,6 +32,9 @@ const runCronJob = async () => {
     });
   } catch (error) {
     if (error.response?.data?.stopcron == true) {
+      sockets.forEach((socket) => {
+        socket.emit('analytics-completed');
+      });
       stopCron();
     }
   }
@@ -42,6 +44,9 @@ const stopCron = () => {
     if (job) {
       job.stop();
       job = null;
+      sockets.forEach((socket) => {
+        socket.emit('analytics-stopped');
+      });
     }
 };
 

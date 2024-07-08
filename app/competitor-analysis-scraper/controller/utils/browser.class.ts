@@ -161,6 +161,8 @@ export default class Browser {
     async getGoogleAnalytics(url:Required<string>):Promise<{speed:number ,availability : string }>{
       try{
         const { data } = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${url}&strategy=mobile`);
+        console.log("--------data :--------",data);
+
         return {speed : data.lighthouseResult.categories.performance.score ,availability : data.loadingExperience.overall_category};
       }catch(err){
         return {speed:0,availability:"NONE"}

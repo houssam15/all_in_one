@@ -13,7 +13,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
     const [totalPage , setTotalPage] = useState(Math.ceil(data.length / rowsLimit));
     const [currentPage, setCurrentPage] = useState(0);
     const [isRefresh , setIsRefresh] = useState(false);
-
+    const [isRowAction,setIsRowAction] = useState(false);
     const nextPage = () => {
         const startIndex = rowsLimit * (currentPage + 1);
         const endIndex = startIndex + rowsLimit;
@@ -48,6 +48,15 @@ export default function Table({title ,columns , data , tableActions , rowActions
     const refreshList =async () => {
         setIsRefresh(!isRefresh); 
     }
+
+    const onRowActionClick =async (action:any)=>{   
+      if (typeof action === 'function'){
+        setIsRowAction(true);
+        await action();
+        setIsRowAction(false);  
+      }
+    
+    }
     
     return (
         <div className="w-full  flex  items-center justify-center my-4">
@@ -80,7 +89,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                              {elm.title}
                                            </th>
                                         ))}
-                                        {rowActions != null ? <th key={`${Date.now()}`} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap`}>Actions</th> : <></>}
+                                        {rowActions != null ? <th key={`${Date.now()}`} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap`}>{isRowAction?<Spinner/>:<>Actions</>}</th> : <></>}
                                     </tr>
                               </thead>
                               <tbody className="relative">
@@ -112,7 +121,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                         {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center flex justify-center gap-2 border-t-2 border-black whitespace-nowrap`}>
                                           {rowActions.map((action , index)=>(
                                                               <div key={index} className={`${action?.helpText?"relative group":""}`}>
-                                                               <i onClick={(e)=>action.controller(elm)} className={`${action.icon} cursor-pointer mx-auto ${action.classes}`}></i> 
+                                                               <i onClick={(e)=>onRowActionClick(()=>action.controller(elm))} className={`${action.icon} cursor-pointer mx-auto ${action.classes}`}></i> 
                                                                {action?.helpText?
                                                                 <span className={`absolute bottom-full left-full transform -translate-x-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2`}>
                                                                 {action.helpText}
