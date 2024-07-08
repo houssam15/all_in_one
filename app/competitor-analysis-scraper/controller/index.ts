@@ -1,10 +1,10 @@
 
-export {createNewWebsite} from "../controller/methods/createNewWebsite";
-export {getPagesAnalytics} from "../controller/methods/getPagesAnalytics";
-export {getWorkingSites} from "../controller/methods/getWorkingSites";
-export {getAllSites} from "../controller/methods/getAllSites";
-export {deleteWebsite} from "../controller/methods/deleteWebsite";
-export {getAllPages} from "../controller/methods/getAllPages";
-export {getPageAnalytics} from "../controller/methods/getPageAnalytics";
-export {setSiteState} from "../controller/methods/setSiteState";
-export {getWebsitePages } from "../controller/methods/getWebSitePages";
+export {createNewWebsite} from "./methods/create_new_website";
+export {getPagesAnalytics} from "./methods/get_pages_analytics";
+export {getWorkingSites} from "./methods/get_working_sites";
+export {getAllSites} from "./methods/get_all_sites";
+export {deleteWebsite} from "./methods/delete_website";
+export {getAllPages} from "./methods/get_all_pages";
+export {getPageAnalytics} from "./methods/get_page_analytics";
+export {setSiteState} from "./methods/set_site_state";
+export {getWebsitePages } from "./methods/get_website_pages";
