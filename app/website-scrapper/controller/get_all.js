@@ -1,5 +1,5 @@
 "use server"
-import {GetAllBase} from "./../database/data";
+import {GetAllBase} from "../database/data";
 export  async function getAllWebsites(){
     try{
  

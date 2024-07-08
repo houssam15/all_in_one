@@ -1,5 +1,5 @@
 "use server"
-import {SaveImagesForSite} from "./../database/data";
+import {SaveImagesForSite} from "../database/data";
 
 const puppeteer = require('puppeteer');
 

@@ -1,5 +1,5 @@
 "use server"
-import {createSiteBase} from "./../database/data";
+import {createSiteBase} from "../database/data";
 export  async function createNewWebsite(site,description){
     try{
  
