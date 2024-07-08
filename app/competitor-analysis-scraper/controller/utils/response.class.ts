@@ -28,7 +28,8 @@ export default class Response {
         return this;
     }
 
-    public setResults(results : any[]){
+ 
+    public setResults(results : any){
         this.results = results;
         return this;
     }

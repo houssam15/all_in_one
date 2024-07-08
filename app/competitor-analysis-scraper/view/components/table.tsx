@@ -13,7 +13,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
     const [totalPage , setTotalPage] = useState(Math.ceil(data.length / rowsLimit));
     const [currentPage, setCurrentPage] = useState(0);
     const [isRefresh , setIsRefresh] = useState(false);
-
+    const [isRowAction,setIsRowAction] = useState(false);
     const nextPage = () => {
         const startIndex = rowsLimit * (currentPage + 1);
         const endIndex = startIndex + rowsLimit;
@@ -48,13 +48,22 @@ export default function Table({title ,columns , data , tableActions , rowActions
     const refreshList =async () => {
         setIsRefresh(!isRefresh); 
     }
+
+    const onRowActionClick =async (action:any)=>{   
+      if (typeof action === 'function'){
+        setIsRowAction(true);
+        await action();
+        setIsRowAction(false);  
+      }
+    
+    }
     
     return (
         <div className="w-full  flex  items-center justify-center my-4">
             <div className="w-full max-w-4xl px-2">
                     <div className="flex items-center justify-between">
                         <div className="min-w-20 flex flex-row gap-1">
-                          {tableActions?.slice(0,2).filter(elm => elm.position==Position.LEFT).map((elm,index) => (
+                          {tableActions?.filter(elm => elm.position==Position.LEFT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
@@ -64,7 +73,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                 {title}
                             </h1>
                         <div className="min-w-20 flex flex-row gap-1">
-                        {tableActions?.slice(0,2).filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
+                        {tableActions?.filter(elm => elm.position==Position.RIGHT).map((elm,index) => (
                              <div key={index} onClick={elm.action} className={`bg-gray-100 py-1 text-center rounded-sm border border-gray-400 cursor-pointer hover:bg-gray-200 p-2 ${elm.classes??""}`}>
                                    {elm.isAction?<Spinner aria-label={elm.title} className="mx-auto" />:elm.title}
                              </div>
@@ -80,7 +89,7 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                              {elm.title}
                                            </th>
                                         ))}
-                                        {rowActions != null ? <th key={`${Date.now()}`} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap`}>Actions</th> : <></>}
+                                        {rowActions != null ? <th key={`${Date.now()}`} className={`py-3 px-3 text-[#212B36] sm:text-center font-bold whitespace-nowrap`}>{isRowAction?<Spinner/>:<>Actions</>}</th> : <></>}
                                     </tr>
                               </thead>
                               <tbody className="relative">
@@ -102,14 +111,24 @@ export default function Table({title ,columns , data , tableActions , rowActions
                                                 : "border-t"
                                             } whitespace-nowrap` }
                                           >
-                                              {(elm[column.key]??column.defaultValue).toString()}
+                                              {column?.builder==null?
+                                               (elm[column.key]??column.defaultValue).toString():
+                                               column.builder(elm[column.key]??column.defaultValue)
+                                              }
                                           </td>                                          
                                         ))}
                                         
-                                        {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center border-t-2 border-black whitespace-nowrap`}>
+                                        {rowActions != null ? <td key={`${Date.now()}`} className={`py-2 px-3 font-normal text-center flex justify-center gap-2 border-t-2 border-black whitespace-nowrap`}>
                                           {rowActions.map((action , index)=>(
-                                                              <div key={index}>
-                                                               <i onClick={(e)=>action.controller(elm)} className="fa-regular fa-trash-can cursor-pointer hover:text-red-500"></i> 
+                                                              <div key={index} className={`${action?.helpText?"relative group":""}`}>
+                                                               <i onClick={(e)=>onRowActionClick(()=>action.controller(elm))} className={`${action.icon} cursor-pointer mx-auto ${action.classes}`}></i> 
+                                                               {action?.helpText?
+                                                                <span className={`absolute bottom-full left-full transform -translate-x-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2`}>
+                                                                {action.helpText}
+                                                                </span>
+                                                                :<></>
+                                                               }
+                                                              
                                                              </div>
                                           ))}
                                         </td> : <></>}

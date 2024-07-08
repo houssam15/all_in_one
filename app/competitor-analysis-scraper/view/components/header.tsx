@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { TypeWriter } from ".";
+import { TypeWriter } from "../components";
 
 export default function Header() {  
     const [isExpand,  setIsExpand] = useState(false);
