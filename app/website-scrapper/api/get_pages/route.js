@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
- import {getPages} from "./../../controller";
+ import {getPages} from "../../controller";
 //http://localhost:3000/competitor-analysis-scraper/api/site/create
 export async function GET (req){
     const response = {module : "website-scrapper" , api:"/get_pages" , action:"get pages"}

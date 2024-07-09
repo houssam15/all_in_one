@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createNewWebsite } from "./../../controller";
+import { createNewWebsite } from "../../controller";
 
 //http://localhost:3000/competitor-analysis-scraper/api/site/create
 export async function GET(req) {
