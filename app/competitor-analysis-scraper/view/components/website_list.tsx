@@ -44,7 +44,7 @@ export default function WebsiteList() {
   useEffect(()=>{
 
     fetchWebsites();
-    const socketIo = io("http://localhost:3001");
+    const socketIo = io(`${process.env.COMPETITOR_ANALYSIS_SCRAPPER_CRON_HOST}`);
     setSocket(socketIo);
 
     socketIo.on('connect', () => {
