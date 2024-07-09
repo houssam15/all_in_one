@@ -9,5 +9,6 @@ export {processPages} from "./process_pages";
 // export {processRessources} from "./process_ressources";
 export {getProcessedImages} from "./process_ressources";
 export {getSite} from "./get_site";
+export {processWebsite} from "./process_website";
 
 
