@@ -9,10 +9,10 @@ export async function GET (req){
     console.log(site);
     const res = await processRessources(site);
 */
-    if(res) 
+    //if(res) 
       return NextResponse.json({...response ,status:true,progress:"DONE"/*, data: {res: res ,   } */},{status: 200});
-    if(!res) 
-      return NextResponse.json({...response ,status:false,progress:"Error", res :{ message : "failed !"}},{status: 400});
+    //if(!res) 
+    //  return NextResponse.json({...response ,status:false,progress:"Error", res :{ message : "failed !"}},{status: 400});
    
  
   } 
